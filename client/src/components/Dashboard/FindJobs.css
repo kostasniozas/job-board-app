@@ -1,0 +1,478 @@
+/* FindJobs Component Styles */
+.findjobs-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Search Header */
+.findjobs-search-header {
+  background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
+  color: white;
+  padding: 40px 30px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 32px rgba(26, 42, 128, 0.2);
+}
+
+.findjobs-search-title h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.findjobs-search-title p {
+  font-size: 1.1rem;
+  margin: 0 0 30px 0;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Search Filters */
+.findjobs-search-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.findjobs-search-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.findjobs-search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.findjobs-search-icon {
+  position: absolute;
+  left: 16px;
+  color: #7A85C1;
+  z-index: 2;
+}
+
+.findjobs-search-input {
+  width: 100%;
+  padding: 16px 16px 16px 50px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1A2A80;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.findjobs-search-input:focus {
+  outline: none;
+  border-color: #B2B0E8;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(178, 176, 232, 0.2);
+}
+
+.findjobs-search-input::placeholder {
+  color: #7A85C1;
+}
+
+.findjobs-filter-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.findjobs-select {
+  padding: 16px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1A2A80;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.findjobs-select:focus {
+  outline: none;
+  border-color: #B2B0E8;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(178, 176, 232, 0.2);
+}
+
+/* Results Header */
+.findjobs-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding: 0 5px;
+}
+
+.findjobs-results-header h3 {
+  color: #1A2A80;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.findjobs-sort {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #7A85C1;
+  font-size: 0.95rem;
+}
+
+.findjobs-sort-select {
+  padding: 8px 12px;
+  border: 2px solid #E1E5F0;
+  border-radius: 8px;
+  background: white;
+  color: #1A2A80;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.findjobs-sort-select:focus {
+  outline: none;
+  border-color: #3B38A0;
+}
+
+/* Job Results */
+.findjobs-results {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.findjobs-job-card {
+  background: white;
+  border: 2px solid #E1E5F0;
+  border-radius: 16px;
+  padding: 25px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.findjobs-job-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1A2A80, #3B38A0);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.findjobs-job-card:hover {
+  border-color: #3B38A0;
+  box-shadow: 0 8px 32px rgba(26, 42, 128, 0.1);
+  transform: translateY(-2px);
+}
+
+.findjobs-job-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Job Header */
+.findjobs-job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.findjobs-company-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.findjobs-company-logo {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #B2B0E8, #7A85C1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.findjobs-job-title {
+  color: #1A2A80;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  line-height: 1.3;
+}
+
+.findjobs-company-name {
+  color: #7A85C1;
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.findjobs-save-btn {
+  background: transparent;
+  border: 2px solid #E1E5F0;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  color: #7A85C1;
+  transition: all 0.3s ease;
+}
+
+.findjobs-save-btn:hover {
+  border-color: #3B38A0;
+  color: #3B38A0;
+  background: rgba(59, 56, 160, 0.05);
+}
+
+.findjobs-save-btn.saved {
+  border-color: #e74c3c;
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.1);
+}
+
+/* Job Details */
+.findjobs-job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.findjobs-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #7A85C1;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.findjobs-job-description {
+  color: #4A5568;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 15px 0;
+}
+
+.findjobs-requirements {
+  margin: 15px 0;
+  color: #4A5568;
+  font-size: 0.95rem;
+}
+
+.findjobs-requirements strong {
+  color: #1A2A80;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.findjobs-requirements ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.findjobs-requirements li {
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+/* Job Actions */
+.findjobs-job-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #E1E5F0;
+}
+
+.findjobs-apply-btn {
+  background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.findjobs-apply-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(26, 42, 128, 0.3);
+}
+
+.findjobs-details-btn {
+  background: transparent;
+  color: #3B38A0;
+  border: 2px solid #3B38A0;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.findjobs-details-btn:hover {
+  background: #3B38A0;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* No Results */
+.findjobs-no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: #7A85C1;
+}
+
+.findjobs-no-results h3 {
+  color: #1A2A80;
+  font-size: 1.5rem;
+  margin: 20px 0 10px 0;
+}
+
+.findjobs-no-results p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Pagination */
+.findjobs-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+  padding: 20px;
+}
+
+.findjobs-page-numbers {
+  display: flex;
+  gap: 5px;
+}
+
+.findjobs-page-btn {
+  background: white;
+  color: #7A85C1;
+  border: 2px solid #E1E5F0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.findjobs-page-btn:hover:not(:disabled) {
+  border-color: #3B38A0;
+  color: #3B38A0;
+}
+
+.findjobs-page-btn.active {
+  background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
+  color: white;
+  border-color: #3B38A0;
+}
+
+.findjobs-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .findjobs-container {
+    padding: 15px;
+  }
+  
+  .findjobs-search-header {
+    padding: 30px 20px;
+  }
+  
+  .findjobs-search-title h2 {
+    font-size: 2rem;
+  }
+  
+  .findjobs-search-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .findjobs-filter-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .findjobs-results-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .findjobs-job-card {
+    padding: 20px;
+  }
+  
+  .findjobs-company-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .findjobs-job-meta {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .findjobs-job-actions {
+    flex-direction: column;
+  }
+  
+  .findjobs-pagination {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .findjobs-search-title h2 {
+    font-size: 1.8rem;
+  }
+  
+  .findjobs-search-title p {
+    font-size: 1rem;
+  }
+  
+  .findjobs-job-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .findjobs-company-info {
+    flex-direction: row;
+    align-items: center;
+  }
+}

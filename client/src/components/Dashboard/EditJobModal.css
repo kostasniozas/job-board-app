@@ -1,0 +1,398 @@
+/* EditJobModal.css - Edit Job Modal Styles */
+
+.editjob-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.editjob-modal {
+  background-color: var(--white);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: editjob-modal-appear 0.3s ease-out;
+}
+
+@keyframes editjob-modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Modal Header */
+.editjob-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px 24px 20px 24px;
+  border-bottom: 1px solid #e5e5e5;
+  flex-shrink: 0;
+}
+
+.editjob-modal-title h2 {
+  color: var(--medium-blue);
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.editjob-job-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gray);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.editjob-close-btn {
+  background: none;
+  border: none;
+  color: var(--gray);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.editjob-close-btn:hover:not(:disabled) {
+  background-color: #f5f5f5;
+  color: var(--medium-blue);
+}
+
+.editjob-close-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Modal Content */
+.editjob-modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* Modal Tabs - Unique Classes */
+.editjob-modal-tabs {
+  display: flex;
+  background-color: var(--white);
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 24px;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.editjob-modal-tab {
+  flex: 1;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.editjob-modal-tab:hover:not(.editjob-modal-tab-active) {
+  background-color: #f5f5f5;
+  color: var(--medium-blue);
+}
+
+.editjob-modal-tab-active {
+  background-color: var(--medium-blue) !important;
+  color: var(--white) !important;
+}
+
+/* Form */
+.editjob-form {
+  padding: 24px;
+}
+
+.editjob-tab-content {
+  min-height: 400px;
+}
+
+.editjob-form-group {
+  margin-bottom: 20px;
+}
+
+.editjob-form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--black);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.editjob-form-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.editjob-form-input:focus {
+  outline: none;
+  border-color: var(--medium-blue);
+  box-shadow: 0 0 0 3px rgba(59, 56, 160, 0.1);
+}
+
+.editjob-form-input.error {
+  border-color: #ef4444;
+}
+
+textarea.editjob-form-input {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.editjob-error-text {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+/* Two-column layout */
+.editjob-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.editjob-form-row .editjob-form-group {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Checkbox Grid */
+.editjob-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.editjob-checkbox-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background-color: var(--white);
+}
+
+.editjob-checkbox-option:hover {
+  background-color: #f8f9ff;
+  border-color: var(--light-blue);
+}
+
+.editjob-checkbox-option input[type="checkbox"] {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--medium-blue);
+}
+
+.editjob-checkbox-option input[type="checkbox"]:checked + span {
+  color: var(--medium-blue);
+  font-weight: 500;
+}
+
+.editjob-checkbox-option span {
+  color: var(--black);
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+/* Modal Footer */
+.editjob-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px 24px 24px;
+  border-top: 1px solid #e5e5e5;
+  flex-shrink: 0;
+  background-color: #fafafa;
+}
+
+/* Buttons */
+.editjob-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border: none;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.editjob-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.editjob-btn-outline {
+  background-color: transparent;
+  color: var(--gray);
+  border: 1px solid #e5e5e5;
+}
+
+.editjob-btn-outline:hover:not(:disabled) {
+  background-color: #f5f5f5;
+  color: var(--medium-blue);
+  border-color: var(--medium-blue);
+}
+
+.editjob-btn-primary {
+  background-color: var(--medium-blue);
+  color: var(--white);
+  border: 1px solid var(--medium-blue);
+}
+
+.editjob-btn-primary:hover:not(:disabled) {
+  background-color: var(--dark-blue);
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .editjob-modal-overlay {
+    padding: 10px;
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+  
+  .editjob-modal {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 12px;
+  }
+  
+  .editjob-modal-header {
+    padding: 20px 16px 16px 16px;
+  }
+  
+  .editjob-modal-title h2 {
+    font-size: 20px;
+  }
+  
+  .editjob-tabs {
+    padding: 0 16px;
+    gap: 2px;
+  }
+  
+  .editjob-tab {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  
+  .editjob-form {
+    padding: 20px 16px;
+  }
+  
+  .editjob-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .editjob-checkbox-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .editjob-modal-footer {
+    padding: 16px;
+    flex-direction: column;
+  }
+  
+  .editjob-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .editjob-modal-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+  
+  .editjob-modal {
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .editjob-modal-header {
+    padding: 16px;
+  }
+  
+  .editjob-tabs {
+    padding: 0 16px;
+  }
+  
+  .editjob-form {
+    padding: 16px;
+  }
+  
+  .editjob-tab-content {
+    min-height: 300px;
+  }
+}
+
+/* Loading state */
+.editjob-btn:disabled .editjob-loading {
+  animation: editjob-spin 1s linear infinite;
+}
+
+@keyframes editjob-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Focus states for accessibility */
+.editjob-checkbox-option:focus-within {
+  border-color: var(--medium-blue);
+  box-shadow: 0 0 0 2px rgba(59, 56, 160, 0.1);
+}
+
+.editjob-tab:focus {
+  outline: 2px solid var(--medium-blue);
+  outline-offset: 2px;
+}

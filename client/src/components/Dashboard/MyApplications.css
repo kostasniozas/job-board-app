@@ -1,0 +1,643 @@
+/* MyApplications Component Styles */
+.myapps-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Header */
+.myapps-header {
+  margin-bottom: 30px;
+}
+
+.myapps-title h2 {
+  color: #1A2A80;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.myapps-title p {
+  color: #7A85C1;
+  font-size: 1.1rem;
+  margin: 0 0 25px 0;
+  font-weight: 400;
+}
+
+/* Controls */
+.myapps-controls {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.myapps-search {
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+}
+
+.myapps-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7A85C1;
+  z-index: 2;
+}
+
+.myapps-search-input {
+  width: 100%;
+  padding: 14px 16px 14px 50px;
+  border: 2px solid #E1E5F0;
+  border-radius: 12px;
+  background: white;
+  color: #1A2A80;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.myapps-search-input:focus {
+  outline: none;
+  border-color: #3B38A0;
+  box-shadow: 0 0 0 4px rgba(59, 56, 160, 0.1);
+}
+
+.myapps-search-input::placeholder {
+  color: #7A85C1;
+}
+
+.myapps-status-filter {
+  padding: 14px 20px;
+  border: 2px solid #E1E5F0;
+  border-radius: 12px;
+  background: white;
+  color: #1A2A80;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.myapps-status-filter:focus {
+  outline: none;
+  border-color: #3B38A0;
+  box-shadow: 0 0 0 4px rgba(59, 56, 160, 0.1);
+}
+
+/* Stats Overview */
+.myapps-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.myapps-stat-card {
+  background: white;
+  border: 2px solid #E1E5F0;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s ease;
+}
+
+.myapps-stat-card:hover {
+  border-color: #3B38A0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(26, 42, 128, 0.1);
+}
+
+.myapps-stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.myapps-stat-info h3 {
+  color: #1A2A80;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+}
+
+.myapps-stat-info p {
+  color: #7A85C1;
+  font-size: 0.9rem;
+  margin: 4px 0 0 0;
+  font-weight: 500;
+}
+
+/* Applications List */
+.myapps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.myapps-card {
+  background: white;
+  border: 2px solid #E1E5F0;
+  border-radius: 16px;
+  padding: 25px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.myapps-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1A2A80, #3B38A0);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.myapps-card:hover {
+  border-color: #3B38A0;
+  box-shadow: 0 8px 32px rgba(26, 42, 128, 0.1);
+  transform: translateY(-2px);
+}
+
+.myapps-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Card Header */
+.myapps-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.myapps-company-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  flex: 1;
+}
+
+.myapps-company-logo {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #B2B0E8, #7A85C1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.myapps-company-logo.large {
+  width: 60px;
+  height: 60px;
+  font-size: 1.8rem;
+}
+
+.myapps-job-title {
+  color: #1A2A80;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  line-height: 1.3;
+}
+
+.myapps-company-name {
+  color: #7A85C1;
+  font-size: 1rem;
+  margin: 0 0 8px 0;
+  font-weight: 500;
+}
+
+.myapps-job-meta {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.myapps-job-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #7A85C1;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Status Section */
+.myapps-status-section {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.myapps-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.myapps-status-date {
+  color: #7A85C1;
+  font-size: 0.8rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Card Body */
+.myapps-card-body {
+  margin-bottom: 20px;
+}
+
+.myapps-job-description {
+  color: #4A5568;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 15px 0;
+}
+
+.myapps-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.myapps-detail-item {
+  color: #4A5568;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.myapps-detail-item strong {
+  color: #1A2A80;
+  font-weight: 600;
+}
+
+/* Card Actions */
+.myapps-card-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid #E1E5F0;
+}
+
+.myapps-view-btn {
+  background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.myapps-view-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(26, 42, 128, 0.3);
+}
+
+.myapps-withdraw-btn {
+  background: transparent;
+  color: #e74c3c;
+  border: 2px solid #e74c3c;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.myapps-withdraw-btn:hover {
+  background: #e74c3c;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Empty State */
+.myapps-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #7A85C1;
+}
+
+.myapps-empty h3 {
+  color: #1A2A80;
+  font-size: 1.5rem;
+  margin: 20px 0 10px 0;
+}
+
+.myapps-empty p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Modal */
+.myapps-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 42, 128, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.myapps-modal {
+  background: white;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(26, 42, 128, 0.3);
+}
+
+.myapps-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  border-bottom: 2px solid #E1E5F0;
+}
+
+.myapps-modal-header h3 {
+  color: #1A2A80;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.myapps-modal-close {
+  background: transparent;
+  border: none;
+  color: #7A85C1;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.myapps-modal-close:hover {
+  background: #E1E5F0;
+  color: #1A2A80;
+}
+
+.myapps-modal-body {
+  padding: 30px;
+}
+
+/* Application Info in Modal */
+.myapps-application-info {
+  margin-bottom: 30px;
+}
+
+.myapps-company-details {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.myapps-company-details h4 {
+  color: #1A2A80;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.myapps-company-details p {
+  color: #7A85C1;
+  margin: 5px 0 0 0;
+}
+
+.myapps-application-notes h5 {
+  color: #1A2A80;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+}
+
+.myapps-application-notes p {
+  color: #4A5568;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Timeline */
+.myapps-timeline h5 {
+  color: #1A2A80;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+}
+
+.myapps-timeline-items {
+  position: relative;
+}
+
+.myapps-timeline-items::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #E1E5F0;
+}
+
+.myapps-timeline-item {
+  position: relative;
+  padding-left: 50px;
+  margin-bottom: 25px;
+}
+
+.myapps-timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.myapps-timeline-marker {
+  position: absolute;
+  left: 8px;
+  top: 5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #E1E5F0;
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px #E1E5F0;
+}
+
+.myapps-timeline-item.completed .myapps-timeline-marker {
+  background: #27ae60;
+  box-shadow: 0 0 0 2px #27ae60;
+}
+
+.myapps-timeline-item.current .myapps-timeline-marker {
+  background: #3498db;
+  box-shadow: 0 0 0 2px #3498db;
+  animation: pulse 2s infinite;
+}
+
+.myapps-timeline-item.pending .myapps-timeline-marker {
+  background: #f39c12;
+  box-shadow: 0 0 0 2px #f39c12;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.myapps-timeline-content h6 {
+  color: #1A2A80;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+}
+
+.myapps-timeline-content p {
+  color: #7A85C1;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .myapps-container {
+    padding: 15px;
+  }
+  
+  .myapps-title h2 {
+    font-size: 1.8rem;
+  }
+  
+  .myapps-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .myapps-search {
+    min-width: auto;
+  }
+  
+  .myapps-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .myapps-card {
+    padding: 20px;
+  }
+  
+  .myapps-card-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .myapps-status-section {
+    text-align: left;
+  }
+  
+  .myapps-company-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .myapps-job-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .myapps-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .myapps-card-actions {
+    flex-direction: column;
+  }
+  
+  .myapps-modal {
+    margin: 10px;
+  }
+  
+  .myapps-modal-header {
+    padding: 20px;
+  }
+  
+  .myapps-modal-body {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .myapps-title h2 {
+    font-size: 1.6rem;
+  }
+  
+  .myapps-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .myapps-company-info {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .myapps-timeline-item {
+    padding-left: 40px;
+  }
+  
+  .myapps-timeline-marker {
+    left: 6px;
+    width: 12px;
+    height: 12px;
+  }
+  
+  .myapps-timeline-items::before {
+    left: 12px;
+  }
+}

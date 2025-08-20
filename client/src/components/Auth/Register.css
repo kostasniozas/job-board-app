@@ -1,0 +1,197 @@
+/* Register.css - Register Component Styles */
+
+/* Step 1: Main container - similar to login but handles taller form */
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--light-gray);
+  padding: 20px;
+}
+
+.register-card {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 480px;             /* Slightly wider than login for two-column fields */
+  border: 1px solid #e5e5e5;
+  margin: 20px 0;               /* Vertical margin for long forms */
+}
+
+/* Step 2: Header styles */
+.register-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.register-header h1 {
+  color: var(--medium-blue);
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.register-header p {
+  color: var(--gray);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* Step 3: Form styles */
+.register-form {
+  margin-bottom: 24px;
+}
+
+/* Step 4: Two-column layout for name fields */
+.form-row {
+  display: flex;
+  gap: 16px;                    /* Space between columns */
+  margin-bottom: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;                      /* Equal width columns */
+  margin-bottom: 0;             /* Remove bottom margin in rows */
+}
+
+/* Step 5: User type selector */
+.user-type-selector {
+  display: flex;
+  gap: 24px;                    /* Space between radio options */
+  margin-top: 8px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.radio-option input[type="radio"] {
+  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--medium-blue);  /* Modern radio button color */
+}
+
+.radio-option span {
+  color: var(--black);
+  font-size: 15px;
+}
+
+/* Step 6: Form group styles */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--black);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+/* Step 7: Input styles */
+.register-form .form-input {
+  margin-bottom: 0;
+  padding: 14px;
+  font-size: 16px;
+  border: 2px solid #e5e5e5;
+  transition: all 0.2s ease;
+}
+
+.register-form .form-input:focus {
+  border-color: var(--medium-blue);
+  box-shadow: 0 0 0 3px rgba(59, 56, 160, 0.1);
+}
+
+.register-form .form-input.error {
+  border-color: #ef4444;        /* Red border for errors */
+}
+
+/* Step 8: Error text styles */
+.error-text {
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+/* Step 9: Register button */
+.register-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 8px;
+  letter-spacing: 0;
+}
+
+.register-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Step 10: Footer */
+.register-footer {
+  text-align: center;
+  color: var(--gray);
+}
+
+.register-footer p {
+  margin: 0;
+}
+
+/* Step 11: Link button (same as login) */
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--medium-blue);
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 4px;
+  font-size: inherit;
+}
+
+.link-btn:hover {
+  color: var(--dark-blue);
+}
+
+/* Step 12: Responsive design */
+@media (max-width: 580px) {
+  .register-card {
+    padding: 24px;
+    max-width: 100%;
+  }
+  
+  /* Stack form fields vertically on mobile */
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .form-row .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .register-header h1 {
+    font-size: 28px;
+  }
+  
+  /* Stack radio buttons vertically on very small screens */
+  .user-type-selector {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .register-container {
+    padding: 12px;
+  }
+}

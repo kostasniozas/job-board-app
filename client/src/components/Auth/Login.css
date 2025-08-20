@@ -1,0 +1,132 @@
+/* Login.css - Login Component Styles */
+
+/* Step 1: Main container - fills full screen */
+.login-container {
+  min-height: 100vh;          /* Full screen height */
+  display: flex;              /* Flexbox for centering */
+  align-items: center;        /* Center vertically */
+  justify-content: center;    /* Center horizontally */
+  background-color: var(--light-gray);
+  padding: 20px;              /* Some padding for mobile */
+}
+
+/* Step 2: Login card - the white box */
+.login-card {
+  background-color: var(--white);
+  border-radius: 12px;        /* Rounded corners */
+  padding: 40px;              /* Inner spacing */
+  width: 100%;                /* Full width */
+  max-width: 400px;           /* But not more than 400px */
+  border: 1px solid #e5e5e5;  /* Light border */
+}
+
+/* Step 3: Header styles */
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;        /* Space below header */
+}
+
+.login-header h1 {
+  color: var(--medium-blue);
+  font-size: 32px;
+  font-weight: 600;             /* Semi-bold works great with Poppins */
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;      /* Less tight spacing for Poppins */
+}
+
+.login-header p {
+  color: var(--gray);
+  font-size: 16px;
+  font-weight: 400;             /* Regular weight */
+}
+
+/* Step 4: Form styles */
+.login-form {
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;        /* Space between form fields */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--black);
+  font-weight: 500;             /* Medium weight with Inter */
+  font-size: 15px;              /* Slightly smaller but cleaner */
+}
+
+/* Step 5: Update input styles for this specific form */
+.login-form .form-input {
+  margin-bottom: 0;           /* Remove bottom margin */
+  padding: 14px;              /* Slightly more padding */
+  font-size: 16px;
+  border: 2px solid #e5e5e5;
+}
+
+.login-form .form-input:focus {
+  border-color: var(--medium-blue);
+  box-shadow: 0 0 0 3px rgba(59, 56, 160, 0.1);  /* Subtle glow */
+}
+
+/* Step 6: Login button styles */
+.login-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 500;             /* Medium weight perfect for Poppins */
+  margin-top: 8px;
+  letter-spacing: 0;            /* No letter spacing needed for Poppins */
+}
+
+.login-btn:disabled {
+  opacity: 0.6;               /* Faded when disabled */
+  cursor: not-allowed;        /* Different cursor */
+}
+
+/* Step 7: Footer styles */
+.login-footer {
+  text-align: center;
+  color: var(--gray);
+}
+
+.login-footer p {
+  margin: 0 0 12px 0;
+}
+
+/* Step 8: Signup button */
+.signup-button {
+  background: none;
+  border: 2px solid var(--medium-blue);
+  color: var(--medium-blue);
+  padding: 10px 24px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  width: 100%;
+}
+
+.signup-button:hover:not(:disabled) {
+  background-color: var(--medium-blue);
+  color: var(--white);
+}
+
+.signup-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Step 9: Responsive design for mobile */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 24px;            /* Less padding on mobile */
+  }
+  
+  .login-header h1 {
+    font-size: 24px;          /* Smaller title on mobile */
+  }
+}

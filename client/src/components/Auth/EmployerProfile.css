@@ -1,0 +1,298 @@
+/* EmployerProfile.css - Employer Profile Form Styles */
+
+.employer-profile-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--light-gray);
+  padding: 20px;
+}
+
+.employer-profile-card {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 700px;
+  border: 1px solid #e5e5e5;
+  margin: 20px 0;
+}
+
+/* Header Styles */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1px solid #e5e5e5;
+  color: var(--gray);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: var(--light-gray);
+  color: var(--medium-blue);
+}
+
+.header-text h1 {
+  color: var(--medium-blue);
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.header-text p {
+  color: var(--gray);
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Progress Bar */
+.progress-container {
+  margin-bottom: 32px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e5e5e5;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--medium-blue);
+  transition: width 0.3s ease;
+  border-radius: 4px;
+}
+
+.progress-text {
+  text-align: center;
+  color: var(--gray);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Step Content */
+.step-content {
+  margin-bottom: 32px;
+}
+
+.step-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.step-header h3 {
+  color: var(--black);
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.step-header p {
+  color: var(--gray);
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--black);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--medium-blue);
+  box-shadow: 0 0 0 3px rgba(59, 56, 160, 0.1);
+}
+
+.form-input.error {
+  border-color: #ef4444;
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+.field-hint {
+  color: var(--gray);
+  font-size: 13px;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Two-column layout */
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.checkbox-option:hover {
+  background-color: #fafafa;
+  border-color: var(--light-blue);
+}
+
+.checkbox-option input[type="checkbox"]:checked + span {
+  color: var(--medium-blue);
+  font-weight: 500;
+}
+
+.checkbox-option input[type="checkbox"] {
+  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--medium-blue);
+}
+
+.checkbox-option span {
+  color: var(--black);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+/* Navigation Buttons */
+.form-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.nav-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .employer-profile-card {
+    padding: 24px;
+    max-width: 100%;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .header-text h1 {
+    font-size: 24px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .checkbox-group {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .checkbox-option {
+    padding: 10px;
+  }
+  
+  .form-navigation {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .nav-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .employer-profile-container {
+    padding: 12px;
+  }
+  
+  .step-header h3 {
+    font-size: 20px;
+  }
+  
+  .checkbox-option span {
+    font-size: 13px;
+  }
+}

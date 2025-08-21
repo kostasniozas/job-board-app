@@ -16,7 +16,7 @@ function App() {
   if (appError) {
     return (
       <div className="error-container">
-        <h2>Oops! Something went wrong</h2>
+   <h2>Κάτι πήγε στραβά - JobBoard App</h2>
         <p>{appError}</p>
         <button onClick={() => setAppError(null)}>Try Again</button>
       </div>

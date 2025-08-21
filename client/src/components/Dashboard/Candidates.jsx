@@ -33,7 +33,7 @@ function Candidates({ userInfo }) {
       appliedDate: '2024-02-20',
       status: 'pending',
       interviewStatus: 'not_requested', // not_requested, requested, questions_sent, completed, reviewed
-      rating: 4,
+      rating: 0, // Changed to 0 - unrated
       experience: '5 years',
       education: 'Computer Science Degree',
       location: 'Athens, Greece',
@@ -101,6 +101,9 @@ function Candidates({ userInfo }) {
   const [jobFilter, setJobFilter] = useState('all');
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [showCandidateDetails, setShowCandidateDetails] = useState(false);
+
+  // NEW: Hover state for interactive stars
+  const [hoveredStar, setHoveredStar] = useState({ candidateId: null, star: 0 });
 
   // Step 3: Video Interview Modal state
   const [showInterviewModal, setShowInterviewModal] = useState(false);
@@ -231,20 +234,33 @@ function Candidates({ userInfo }) {
     });
   };
 
-  // Step 11: Render rating stars
+  // Step 11: UPDATED - Render interactive rating stars
   const renderRating = (rating, candidateId, interactive = false) => {
+    const isHovering = hoveredStar.candidateId === candidateId;
+    const displayRating = isHovering ? hoveredStar.star : rating;
+
     return (
       <div className="candidates-rating">
         {[1, 2, 3, 4, 5].map(star => (
           <button
             key={star}
             onClick={interactive ? () => handleRateCandidate(candidateId, star) : undefined}
-            className={`candidates-star ${star <= rating ? 'active' : ''} ${interactive ? 'interactive' : ''}`}
+            onMouseEnter={interactive ? () => setHoveredStar({ candidateId, star }) : undefined}
+            onMouseLeave={interactive ? () => setHoveredStar({ candidateId: null, star: 0 }) : undefined}
+            className={`candidates-star ${
+              star <= displayRating ? 'active' : ''
+            } ${interactive ? 'interactive' : ''}`}
             disabled={!interactive}
+            title={interactive ? `Rate ${star} star${star !== 1 ? 's' : ''}` : ''}
           >
             <Star size={16} />
           </button>
         ))}
+        {interactive && rating > 0 && (
+          <span className="candidates-rating-text">
+            {rating}/5
+          </span>
+        )}
       </div>
     );
   };

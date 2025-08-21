@@ -1,4 +1,4 @@
-// MyJobs.jsx - Employer Job Management Component with Edit Modal
+// MyJobs.jsx - Updated with DeleteJobModal
 
 import { useState } from 'react';
 import { 
@@ -16,6 +16,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import EditJobModal from './EditJobModal';
+import DeleteJobModal from './DeleteJobModal';  // ΝΕΟ Import
 import './MyJobs.css';
 
 function MyJobs({ onCreateJob, userInfo }) {
@@ -95,9 +96,14 @@ function MyJobs({ onCreateJob, userInfo }) {
   const [selectedJob, setSelectedJob] = useState(null);
   const [showJobDetails, setShowJobDetails] = useState(false);
   
-  // Step 3: Edit Modal state
+  // Step 3: Modal states
   const [editingJob, setEditingJob] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  
+  // ΝΕΟ: Delete Modal state
+  const [deletingJob, setDeletingJob] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Step 4: Filter jobs based on search and status
   const filteredJobs = jobs.filter(job => {
@@ -126,9 +132,28 @@ function MyJobs({ onCreateJob, userInfo }) {
     setEditingJob(null);
   };
 
-  const handleDeleteJob = (jobId) => {
-    if (window.confirm('Are you sure you want to delete this job posting?')) {
+  // ΝΕΟ: Updated delete functions
+  const handleDeleteJob = (job) => {
+    setDeletingJob(job);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = (jobId) => {
+    setIsDeleting(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
       setJobs(prev => prev.filter(job => job.id !== jobId));
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+      setDeletingJob(null);
+    }, 1500);
+  };
+
+  const handleCloseDeleteModal = () => {
+    if (!isDeleting) {
+      setShowDeleteModal(false);
+      setDeletingJob(null);
     }
   };
 
@@ -202,8 +227,9 @@ function MyJobs({ onCreateJob, userInfo }) {
                   Close Job
                 </button>
               )}
+              {/* UPDATED: Καλεί το νέο delete handler */}
               <button 
-                onClick={() => handleDeleteJob(job.id)}
+                onClick={() => handleDeleteJob(job)}
                 className="myjobs-delete-action"
               >
                 <Trash2 size={16} />
@@ -436,6 +462,15 @@ function MyJobs({ onCreateJob, userInfo }) {
         }}
         onSave={handleSaveEditedJob}
         userInfo={userInfo}
+      />
+
+      {/* ΝΕΟ: Delete Job Modal */}
+      <DeleteJobModal
+        job={deletingJob}
+        isOpen={showDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
       />
     </div>
   );

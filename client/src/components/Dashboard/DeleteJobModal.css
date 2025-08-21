@@ -1,0 +1,382 @@
+/* DeleteJobModal.css - Delete Job Confirmation Modal Styles */
+
+.deletejob-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.deletejob-modal {
+  background-color: var(--white);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  animation: deletejob-modal-appear 0.3s ease-out;
+  border: 1px solid #fee;
+}
+
+@keyframes deletejob-modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Modal Header */
+.deletejob-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 24px 20px 24px;
+  border-bottom: 1px solid #fecaca;
+  background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+.deletejob-warning-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #fef2f2;
+  border: 2px solid #fecaca;
+  border-radius: 50%;
+  color: #dc2626;
+  flex-shrink: 0;
+}
+
+.deletejob-modal-title {
+  color: #dc2626;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+.deletejob-close-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.deletejob-close-btn:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  color: #dc2626;
+}
+
+.deletejob-close-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Modal Content */
+.deletejob-modal-content {
+  padding: 24px;
+}
+
+/* Job Info Card */
+.deletejob-job-info {
+  margin-bottom: 24px;
+}
+
+.deletejob-job-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.deletejob-job-title {
+  color: var(--medium-blue);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.deletejob-job-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gray);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.deletejob-department {
+  background-color: var(--medium-blue);
+  color: var(--white);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.deletejob-separator {
+  color: #cbd5e1;
+}
+
+.deletejob-location {
+  color: var(--gray);
+}
+
+.deletejob-applicants {
+  color: var(--medium-blue);
+  font-weight: 600;
+}
+
+/* Warning Content */
+.deletejob-warning-content {
+  text-align: left;
+}
+
+.deletejob-warning-text {
+  font-size: 16px;
+  color: var(--black);
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.deletejob-consequences {
+  margin-bottom: 20px;
+}
+
+.deletejob-consequences h4 {
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.deletejob-consequences-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.deletejob-consequences-list li {
+  color: var(--gray);
+  font-size: 14px;
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.4;
+}
+
+.deletejob-consequences-list li::before {
+  content: '✗';
+  position: absolute;
+  left: 0;
+  color: #dc2626;
+  font-weight: bold;
+}
+
+/* Applicant Warning */
+.deletejob-applicant-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background-color: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 12px;
+  color: #92400e;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.deletejob-applicant-warning svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.deletejob-applicant-warning strong {
+  font-weight: 600;
+}
+
+/* Modal Footer */
+.deletejob-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px 24px 24px;
+  border-top: 1px solid #f3f4f6;
+  background-color: #fafafa;
+  border-radius: 0 0 16px 16px;
+}
+
+/* Buttons */
+.deletejob-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border: none;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.deletejob-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.deletejob-btn-outline {
+  background-color: var(--white);
+  color: var(--gray);
+  border: 1px solid #e5e7eb;
+}
+
+.deletejob-btn-outline:hover:not(:disabled) {
+  background-color: #f9fafb;
+  color: var(--medium-blue);
+  border-color: var(--medium-blue);
+}
+
+.deletejob-btn-danger {
+  background-color: #dc2626;
+  color: var(--white);
+  border: 1px solid #dc2626;
+}
+
+.deletejob-btn-danger:hover:not(:disabled) {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .deletejob-modal-overlay {
+    padding: 10px;
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+  
+  .deletejob-modal {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+  
+  .deletejob-modal-header {
+    padding: 20px 16px 16px 16px;
+    border-radius: 12px 12px 0 0;
+  }
+  
+  .deletejob-modal-title {
+    font-size: 18px;
+  }
+  
+  .deletejob-modal-content {
+    padding: 20px 16px;
+  }
+  
+  .deletejob-modal-footer {
+    padding: 16px;
+    flex-direction: column;
+    border-radius: 0 0 12px 12px;
+  }
+  
+  .deletejob-btn {
+    width: 100%;
+  }
+  
+  .deletejob-warning-text {
+    font-size: 15px;
+  }
+  
+  .deletejob-job-card {
+    padding: 12px;
+  }
+  
+  .deletejob-job-title {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .deletejob-modal-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+  
+  .deletejob-modal {
+    min-height: 100vh;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .deletejob-modal-header {
+    padding: 16px;
+    border-radius: 0;
+  }
+  
+  .deletejob-modal-content {
+    padding: 16px;
+    flex: 1;
+  }
+  
+  .deletejob-modal-footer {
+    border-radius: 0;
+  }
+  
+  .deletejob-job-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .deletejob-separator {
+    display: none;
+  }
+}
+
+/* Focus states for accessibility */
+.deletejob-btn:focus {
+  outline: 2px solid var(--medium-blue);
+  outline-offset: 2px;
+}
+
+.deletejob-btn-danger:focus {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+/* Loading animation */
+.deletejob-btn:disabled .deletejob-loading {
+  animation: deletejob-spin 1s linear infinite;
+}
+
+@keyframes deletejob-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

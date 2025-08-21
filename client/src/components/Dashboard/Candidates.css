@@ -232,10 +232,11 @@
   color: #721c24;
 }
 
-/* Rating Stars */
+/* Rating Stars - UPDATED WITH INTERACTIVE STYLES */
 .candidates-rating {
   display: flex;
   gap: 2px;
+  align-items: center;
 }
 
 .candidates-star {
@@ -243,20 +244,44 @@
   border: none;
   color: #ddd;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   padding: 2px;
+  border-radius: 2px;
 }
 
 .candidates-star.active {
-  color: #ffc107;
+  color: #fbbf24;
+}
+
+.candidates-star.active svg {
+  fill: #fbbf24;
+  stroke: #f59e0b;
+}
+
+.candidates-star:not(.active) svg {
+  fill: none;
+  stroke: currentColor;
 }
 
 .candidates-star.interactive:hover {
-  color: #ffc107;
+  color: #fbbf24;
+  transform: scale(1.1);
+  background-color: rgba(251, 191, 36, 0.1);
+}
+
+.candidates-star.interactive:active {
+  transform: scale(0.95);
 }
 
 .candidates-star:disabled {
   cursor: default;
+}
+
+.candidates-rating-text {
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--medium-blue);
 }
 
 /* Card Body */

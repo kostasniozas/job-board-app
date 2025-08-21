@@ -13,7 +13,8 @@ import {
   Eye,
   Star,
   Target,
-  Building
+  Building,
+  Video
 } from 'lucide-react';
 
 // Import the new components
@@ -22,6 +23,7 @@ import MyJobs from './MyJobs';
 import Candidates from './Candidates';
 import Analytics from './Analytics';
 import EditProfile from './EditProfile';
+import InterviewReview from './InterviewReview';
 
 // Import CSS files
 import './EmployerDashboard.css';
@@ -30,6 +32,8 @@ import './MyJobs.css';
 import './Candidates.css';
 import './Analytics.css';
 import './EditProfile.css';
+import './InterviewReview.css';
+import './VideoReviewModal.css';
 
 function EmployerDashboard({ userInfo, onLogout }) {
   // Step 1: Navigation state
@@ -49,6 +53,7 @@ function EmployerDashboard({ userInfo, onLogout }) {
     { id: 'post-job', label: 'Post Job', icon: Plus },
     { id: 'jobs', label: 'My Jobs', icon: Briefcase },
     { id: 'candidates', label: 'Candidates', icon: Users },
+    { id: 'interviews', label: 'Interviews', icon: Video },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp },
     { id: 'profile', label: 'Edit Profile', icon: User }
   ];
@@ -191,7 +196,7 @@ function EmployerDashboard({ userInfo, onLogout }) {
           </div>
         );
 
-      // ✅ NEW: Integrated Components instead of placeholders
+      // ✅ INTEGRATED COMPONENTS
       case 'post-job':
         return <PostJobForm onBack={handleBackToDashboard} userInfo={userInfo} />;
 
@@ -200,6 +205,9 @@ function EmployerDashboard({ userInfo, onLogout }) {
 
       case 'candidates':
         return <Candidates userInfo={userInfo} />;
+
+      case 'interviews':
+        return <InterviewReview userInfo={userInfo} />;
 
       case 'analytics':
         return <Analytics userInfo={userInfo} />;

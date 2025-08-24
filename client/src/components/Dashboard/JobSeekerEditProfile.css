@@ -1,4 +1,6 @@
-/* JobSeekerEditProfile Component Styles */
+/* JobSeekerEditProfile Component Styles - UPDATED FOR UI CONSISTENCY */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 .jseditprofile-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -6,22 +8,30 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* Header */
+/* ✅ UPDATED: Header with gradient background like other components */
 .jseditprofile-header {
+  background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
+  color: white;
+  border-radius: 20px;
+  padding: 40px;
   margin-bottom: 30px;
 }
 
-.jseditprofile-header h2 {
-  color: #1A2A80;
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin: 0 0 8px 0;
+.jseditprofile-hero {
+  text-align: center;
 }
 
-.jseditprofile-header p {
-  color: #7A85C1;
-  font-size: 1.1rem;
+.jseditprofile-hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
+}
+
+.jseditprofile-hero p {
+  font-size: 1.2rem;
   margin: 0;
+  opacity: 0.9;
   font-weight: 400;
 }
 
@@ -393,8 +403,17 @@
     padding: 15px;
   }
   
-  .jseditprofile-header h2 {
-    font-size: 1.8rem;
+  .jseditprofile-header {
+    padding: 30px 25px;
+    border-radius: 16px;
+  }
+  
+  .jseditprofile-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .jseditprofile-hero p {
+    font-size: 1.1rem;
   }
   
   .jseditprofile-content {
@@ -440,8 +459,16 @@
 }
 
 @media (max-width: 480px) {
-  .jseditprofile-header h2 {
-    font-size: 1.6rem;
+  .jseditprofile-header {
+    padding: 25px 20px;
+  }
+  
+  .jseditprofile-hero h1 {
+    font-size: 1.8rem;
+  }
+  
+  .jseditprofile-search-input {
+    padding: 14px 14px 14px 45px;
   }
   
   .jseditprofile-tabs {

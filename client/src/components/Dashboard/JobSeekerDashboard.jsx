@@ -62,15 +62,38 @@ function JobSeekerDashboard({ userInfo, onLogout }) {
       case 'overview':
         return (
           <div className="main-content">
-            <div className="content-header">
-              <div>
+            {/* ✅ UPDATED: Header with gradient background like other components */}
+            <div className="jobseeker-overview-header">
+              <div className="jobseeker-overview-hero">
                 <h1>Welcome back, {userInfo?.firstName || 'Job Seeker'}!</h1>
-                <p>Your next career opportunity is just around the corner</p>
+                <p>Your next career opportunity is just around the corner. Let's find your perfect match.</p>
               </div>
-              <button className="btn btn-primary find-jobs-btn" onClick={() => setActiveSection('find-jobs')}>
-                <Search size={20} />
-                Find Jobs
-              </button>
+
+              <div className="jobseeker-overview-search-section">
+                <div className="jobseeker-overview-search-row">
+                  <div className="jobseeker-overview-search-box">
+                    <Search size={20} />
+                    <input
+                      type="text"
+                      placeholder="Search for your dream job..."
+                      className="jobseeker-overview-search-input"
+                      readOnly
+                      onClick={() => setActiveSection('find-jobs')}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </div>
+                  
+                  <div className="jobseeker-overview-cta-box">
+                    <button 
+                      className="jobseeker-overview-find-jobs-btn"
+                      onClick={() => setActiveSection('find-jobs')}
+                    >
+                      <Search size={20} />
+                      Find Jobs
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Stats Cards */}

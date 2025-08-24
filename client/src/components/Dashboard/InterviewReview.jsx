@@ -1,4 +1,4 @@
-// InterviewReview.jsx - Interview Review Dashboard for Employers
+// InterviewReview.jsx - Complete Interview Review Dashboard for Employers
 
 import { useState } from 'react';
 import { 
@@ -142,6 +142,42 @@ function InterviewReview({ userInfo }) {
           rating: 4,
           notes: 'Good adaptability example',
           videoUrl: 'mock-video-3.mp4'
+        },
+        {
+          id: 4,
+          type: 'random',
+          question: 'How do you handle tight deadlines and pressure?',
+          duration: '2:00',
+          rating: 4,
+          notes: 'Clear examples provided',
+          videoUrl: 'mock-video-4.mp4'
+        },
+        {
+          id: 5,
+          type: 'custom',
+          question: 'What marketing tools and platforms do you prefer?',
+          duration: '2:30',
+          rating: 5,
+          notes: 'Comprehensive knowledge of modern tools',
+          videoUrl: 'mock-video-5.mp4'
+        },
+        {
+          id: 6,
+          type: 'random',
+          question: 'Describe your ideal work environment.',
+          duration: '1:45',
+          rating: 3,
+          notes: 'Standard response',
+          videoUrl: 'mock-video-6.mp4'
+        },
+        {
+          id: 7,
+          type: 'custom',
+          question: 'How do you stay updated with marketing trends?',
+          duration: '1:15',
+          rating: 4,
+          notes: 'Good resources mentioned',
+          videoUrl: 'mock-video-7.mp4'
         }
       ],
       overallNotes: 'Excellent communication skills and strategic thinking. Strong cultural fit.',
@@ -176,6 +212,51 @@ function InterviewReview({ userInfo }) {
           rating: 0,
           notes: '',
           videoUrl: 'mock-video-2.mp4'
+        },
+        {
+          id: 3,
+          type: 'random',
+          question: 'Tell us about a time you had to learn something new quickly.',
+          duration: '1:35',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-3.mp4'
+        },
+        {
+          id: 4,
+          type: 'custom',
+          question: 'What testing frameworks do you prefer and why?',
+          duration: '2:10',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-4.mp4'
+        },
+        {
+          id: 5,
+          type: 'random',
+          question: 'How do you handle tight deadlines and pressure?',
+          duration: '1:50',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-5.mp4'
+        },
+        {
+          id: 6,
+          type: 'custom',
+          question: 'Describe your approach to code reviews.',
+          duration: '0:50',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-6.mp4'
+        },
+        {
+          id: 7,
+          type: 'random',
+          question: 'Describe your ideal work environment.',
+          duration: '0:00', // Not answered
+          rating: 0,
+          notes: '',
+          videoUrl: null
         }
       ],
       overallNotes: '',
@@ -217,12 +298,15 @@ function InterviewReview({ userInfo }) {
         const updatedQuestions = interview.questionsData.map(q =>
           q.id === questionId ? { ...q, rating, notes } : q
         );
-        const avgRating = updatedQuestions.reduce((sum, q) => sum + q.rating, 0) / updatedQuestions.length;
+        const ratedQuestions = updatedQuestions.filter(q => q.rating > 0);
+        const avgRating = ratedQuestions.length > 0 
+          ? ratedQuestions.reduce((sum, q) => sum + q.rating, 0) / ratedQuestions.length 
+          : 0;
         return {
           ...interview,
           questionsData: updatedQuestions,
           averageRating: avgRating,
-          status: 'reviewed'
+          status: ratedQuestions.length > 0 ? 'reviewed' : 'submitted'
         };
       }
       return interview;
@@ -253,6 +337,17 @@ function InterviewReview({ userInfo }) {
       case 'reviewed': return 'Reviewed - Pending Decision';
       case 'decided': return 'Decision Made';
       default: return 'Unknown';
+    }
+  };
+
+  // Get button text based on status
+  const getReviewButtonText = (interview) => {
+    if (interview.status === 'submitted') {
+      return 'Start Review';
+    } else if (interview.status === 'reviewed') {
+      return 'View Review';
+    } else {
+      return 'Review Interview';
     }
   };
 
@@ -387,10 +482,10 @@ function InterviewReview({ userInfo }) {
                     className="interview-btn interview-btn-primary"
                   >
                     <Play size={16} />
-                    {interview.status === 'submitted' ? 'Start Review' : 
-                     interview.status === 'reviewed' ? 'View Review' : 'Review Interview'}
+                    {getReviewButtonText(interview)}
                   </button>
 
+                  {/* Show decision buttons only if NOT decided yet and status is reviewed */}
                   {interview.status === 'reviewed' && !interview.decision && (
                     <>
                       <button
@@ -417,6 +512,7 @@ function InterviewReview({ userInfo }) {
                     </>
                   )}
 
+                  {/* Show decision result if already decided */}
                   {interview.decision && (
                     <div className="interview-decision-display">
                       {interview.decision === 'advance' && <Award size={16} color="#28a745" />}
@@ -443,7 +539,7 @@ function InterviewReview({ userInfo }) {
         )}
       </div>
 
-      {/* Video Review Modal */}
+      {/* Video Review Modal - ENHANCED with onMakeDecision prop */}
       {showVideoModal && selectedInterview && (
         <VideoReviewModal
           interview={selectedInterview}
@@ -453,6 +549,7 @@ function InterviewReview({ userInfo }) {
             setSelectedInterview(null);
           }}
           onUpdateRating={handleUpdateRating}
+          onMakeDecision={handleMakeDecision}
           userInfo={userInfo}
         />
       )}

@@ -1,4 +1,4 @@
-/* VideoReviewModal.css - Video Review Modal Styles with Unique Classes */
+/* VideoReviewModal.css - Complete Video Review Modal Styles with Enhanced Decision Buttons */
 
 .video-interview-overlay {
   position: fixed !important;
@@ -12,6 +12,7 @@
   justify-content: center !important;
   z-index: 9999 !important;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .video-interview-modal {
@@ -99,6 +100,7 @@
   flex-direction: column;
   border-right: 1px solid #e5e5e5;
   min-height: 0;
+  overflow-y: auto;
 }
 
 .video-interview-question-header {
@@ -533,7 +535,7 @@
   font-size: 12px;
 }
 
-/* Modal Footer - FIXED */
+/* Modal Footer - ENHANCED with Decision Buttons */
 .video-interview-footer {
   display: flex;
   justify-content: space-between;
@@ -543,9 +545,7 @@
   background-color: #fafafa;
   flex-shrink: 0;
   min-height: 80px;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
+  gap: 16px;
 }
 
 .video-interview-stats {
@@ -567,6 +567,8 @@
 .video-interview-actions {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .video-interview-btn {
@@ -581,6 +583,7 @@
   transition: all 0.2s ease;
   text-decoration: none;
   border: none;
+  white-space: nowrap;
 }
 
 .video-interview-btn-outline {
@@ -610,6 +613,40 @@
   color: #9ca3af;
   border-color: #d1d5db;
   cursor: not-allowed;
+}
+
+/* NEW Decision Button Colors */
+.video-interview-btn-success {
+  background-color: #28a745;
+  color: var(--white);
+  border: 1px solid #28a745;
+}
+
+.video-interview-btn-success:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+.video-interview-btn-danger {
+  background-color: #dc3545;
+  color: var(--white);
+  border: 1px solid #dc3545;
+}
+
+.video-interview-btn-danger:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.video-interview-btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+  border: 1px solid #ffc107;
+}
+
+.video-interview-btn-warning:hover {
+  background-color: #e0a800;
+  transform: translateY(-1px);
 }
 
 /* Responsive Design */
@@ -695,11 +732,70 @@
   .video-interview-actions {
     width: 100%;
     justify-content: stretch;
+    flex-direction: column;
   }
   
   .video-interview-btn {
-    flex: 1;
+    width: 100%;
     justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .video-interview-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+  
+  .video-interview-modal {
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .video-interview-header,
+  .video-interview-player-section,
+  .video-interview-review-panel,
+  .video-interview-footer {
+    padding: 16px;
+  }
+  
+  .video-interview-progress-bar {
+    width: 120px;
+  }
+  
+  .video-interview-question-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .video-interview-controls-main {
+    gap: 6px;
+  }
+  
+  .video-interview-control-btn {
+    padding: 6px;
+  }
+  
+  .video-interview-volume-control {
+    display: none;
+  }
+  
+  .video-interview-rating-stars {
+    justify-content: center;
+  }
+  
+  .video-interview-star {
+    padding: 8px;
+  }
+  
+  .video-interview-quick-tags {
+    justify-content: center;
+  }
+  
+  .video-interview-questions-overview {
+    max-height: 200px;
   }
 }
 
@@ -727,425 +823,26 @@
 .video-interview-question-item {
   animation: fadeIn 0.2s ease-out;
 }
-}
-
-.video-star {
-  background: none;
-  border: none;
-  color: #ddd;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.video-star:hover {
-  background-color: rgba(251, 191, 36, 0.1);
-  transform: scale(1.1);
-}
-
-.video-star-active {
-  color: #fbbf24;
-}
-
-.video-star-active svg {
-  fill: #fbbf24;
-}
-
-.video-rating-text {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--gray);
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-
-.video-rating-description {
-  color: var(--medium-blue);
-  font-weight: 500;
-}
-
-/* Notes Textarea */
-.video-notes-textarea {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #e5e5e5;
-  border-radius: 8px;
-  font-size: 14px;
-  font-family: inherit;
-  resize: vertical;
-  transition: border-color 0.2s ease;
-  box-sizing: border-box;
-}
-
-.video-notes-textarea:focus {
-  outline: none;
-  border-color: var(--medium-blue);
-  box-shadow: 0 0 0 3px rgba(59, 56, 160, 0.1);
-}
-
-/* Quick Tags */
-.video-quick-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.video-tag {
-  padding: 6px 12px;
-  background-color: var(--white);
-  border: 1px solid #e5e5e5;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--gray);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.video-tag:hover {
-  background-color: var(--medium-blue);
-  color: var(--white);
-  border-color: var(--medium-blue);
-}
-
-/* Questions Overview */
-.video-questions-overview {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.video-question-item {
-  padding: 12px;
-  background-color: var(--white);
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.video-question-item:hover {
-  border-color: var(--light-blue);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.video-question-item.active {
-  border-color: var(--medium-blue);
-  background-color: #f0f4ff;
-}
-
-.video-question-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.video-question-item-number {
-  background-color: var(--medium-blue);
-  color: var(--white);
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.video-question-item-text {
-  color: var(--gray);
-  font-size: 13px;
-  line-height: 1.3;
-  margin: 0 0 8px 0;
-}
-
-.video-question-item-rating {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--gray);
-  font-size: 12px;
-}
-
-/* Modal Footer */
-.video-review-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-top: 1px solid #e5e5e5;
-  background-color: #fafafa;
-  flex-shrink: 0;
-  min-height: 80px;
-}
-
-.video-review-stats {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  color: var(--gray);
-  font-size: 14px;
-}
-
-.video-review-complete {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #28a745;
-  font-weight: 500;
-}
-
-.video-review-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.video-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  border: none;
-}
-
-.video-btn-outline {
-  background-color: var(--white);
-  color: var(--gray);
-  border: 1px solid #e5e5e5;
-}
-
-.video-btn-outline:hover {
-  background-color: #f3f4f6;
-  color: var(--black);
-}
-
-.video-btn-primary {
-  background-color: var(--medium-blue);
-  color: var(--white);
-  border: 1px solid var(--medium-blue);
-}
-
-.video-btn-primary:hover:not(:disabled) {
-  background-color: var(--dark-blue);
-  transform: translateY(-1px);
-}
-
-.video-btn-primary:disabled {
-  background-color: #d1d5db;
-  color: #9ca3af;
-  border-color: #d1d5db;
-  cursor: not-allowed;
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .video-review-content {
-    flex-direction: column;
-  }
-  
-  .video-player-section {
-    border-right: none;
-    border-bottom: 1px solid #e5e5e5;
-  }
-  
-  .video-review-panel {
-    max-height: 400px;
-  }
-  
-  .video-controls-main {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  .video-seek-bar {
-    order: -1;
-    width: 100%;
-    margin: 0 0 8px 0;
-  }
-}
-
-@media (max-width: 768px) {
-  .video-review-overlay {
-    padding: 10px;
-  }
-  
-  .video-review-modal {
-    max-width: 100%;
-    max-height: 98vh;
-    border-radius: 12px;
-  }
-  
-  .video-review-header {
-    padding: 16px 20px;
-  }
-  
-  .video-review-title h2 {
-    font-size: 20px;
-  }
-  
-  .video-progress-bar {
-    width: 150px;
-  }
-  
-  .video-player-section,
-  .video-review-panel {
-    padding: 20px;
-  }
-  
-  .video-question-text h3 {
-    font-size: 16px;
-  }
-  
-  .video-candidate-avatar {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
-  }
-  
-  .video-navigation {
-    flex-direction: column;
-  }
-  
-  .video-nav-btn {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .video-review-footer {
-    padding: 16px 20px;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .video-review-actions {
-    width: 100%;
-    justify-content: stretch;
-  }
-  
-  .video-btn {
-    flex: 1;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .video-review-overlay {
-    padding: 0;
-    align-items: stretch;
-  }
-  
-  .video-review-modal {
-    height: 100vh;
-    max-height: 100vh;
-    border-radius: 0;
-  }
-  
-  .video-review-header,
-  .video-player-section,
-  .video-review-panel,
-  .video-review-footer {
-    padding: 16px;
-  }
-  
-  .video-progress-bar {
-    width: 120px;
-  }
-  
-  .video-question-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .video-controls-main {
-    gap: 6px;
-  }
-  
-  .video-control-btn {
-    padding: 6px;
-  }
-  
-  .video-volume-control {
-    display: none;
-  }
-  
-  .video-rating-stars {
-    justify-content: center;
-  }
-  
-  .video-star {
-    padding: 8px;
-  }
-  
-  .video-quick-tags {
-    justify-content: center;
-  }
-  
-  .video-questions-overview {
-    max-height: 200px;
-  }
-  
-  .video-review-actions {
-    flex-direction: column;
-  }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.video-review-modal {
-  animation: slideUp 0.3s ease-out;
-}
-
-.video-question-item {
-  animation: fadeIn 0.2s ease-out;
-}
 
 /* Custom Scrollbar */
-.video-questions-overview::-webkit-scrollbar,
-.video-review-panel::-webkit-scrollbar {
+.video-interview-questions-overview::-webkit-scrollbar,
+.video-interview-review-panel::-webkit-scrollbar {
   width: 6px;
 }
 
-.video-questions-overview::-webkit-scrollbar-track,
-.video-review-panel::-webkit-scrollbar-track {
+.video-interview-questions-overview::-webkit-scrollbar-track,
+.video-interview-review-panel::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 3px;
 }
 
-.video-questions-overview::-webkit-scrollbar-thumb,
-.video-review-panel::-webkit-scrollbar-thumb {
+.video-interview-questions-overview::-webkit-scrollbar-thumb,
+.video-interview-review-panel::-webkit-scrollbar-thumb {
   background: var(--light-blue);
   border-radius: 3px;
 }
 
-.video-questions-overview::-webkit-scrollbar-thumb:hover,
-.video-review-panel::-webkit-scrollbar-thumb:hover {
+.video-interview-questions-overview::-webkit-scrollbar-thumb:hover,
+.video-interview-review-panel::-webkit-scrollbar-thumb:hover {
   background: var(--medium-blue);
 }

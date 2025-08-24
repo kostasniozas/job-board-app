@@ -106,6 +106,7 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, onMakeDe
     onClose();
   };
 
+<<<<<<< HEAD
   const handleDecision = (decision) => {
     if (onMakeDecision) {
       onMakeDecision(interview.id, decision);
@@ -119,6 +120,12 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, onMakeDe
   const progressPercentage = (reviewProgress / totalQuestions) * 100;
   const isReviewComplete = reviewProgress === totalQuestions;
 
+=======
+// Calculate review progress - ΔΙΟΡΘΩΜΕΝΟ
+const reviewProgress = interview?.questionsData?.filter(q => q.rating > 0).length || 0;
+const totalQuestions = interview?.questionsData?.length || 7;
+const progressPercentage = totalQuestions > 0 ? (reviewProgress / totalQuestions) * 100 : 0;
+>>>>>>> 99959e553ce885295c3350d5d386c282bdbd9cbb
   if (!isOpen) return null;
 
   return (
@@ -128,6 +135,7 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, onMakeDe
         <div className="video-interview-header">
           <div className="video-interview-title">
             <h2>Interview Review: {interview.candidateInitials}</h2>
+<<<<<<< HEAD
             <div className="video-interview-progress">
               <span>{reviewProgress}/{totalQuestions} questions reviewed</span>
               <div className="video-interview-progress-bar">
@@ -137,6 +145,9 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, onMakeDe
                 ></div>
               </div>
             </div>
+=======
+         
+>>>>>>> 99959e553ce885295c3350d5d386c282bdbd9cbb
           </div>
           <button onClick={onClose} className="video-interview-close">
             <X size={24} />
@@ -361,6 +372,7 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, onMakeDe
           </div>
         </div>
 
+<<<<<<< HEAD
         {/* Modal Footer - FIXED με working decision buttons */}
         <div className="video-interview-footer">
           <div className="video-interview-stats">
@@ -371,6 +383,12 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, onMakeDe
                 Review Complete
               </span>
             )}
+=======
+        {/* Modal Footer */}
+        <div className="video-review-footer">
+          <div className="video-review-stats">
+         <span>Interview Review Session</span>
+>>>>>>> 99959e553ce885295c3350d5d386c282bdbd9cbb
           </div>
           
           <div className="video-interview-actions">
@@ -408,8 +426,13 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, onMakeDe
             {/* FIXED: Complete Review Button */}
             <button 
               onClick={handleFinishReview}
+<<<<<<< HEAD
               className="video-interview-btn video-interview-btn-primary"
               disabled={reviewProgress === 0}
+=======
+              className="video-btn video-btn-primary"
+         disabled={false}
+>>>>>>> 99959e553ce885295c3350d5d386c282bdbd9cbb
             >
               <CheckCircle size={16} />
               {isReviewComplete ? 'Complete Review' : `Complete Review (${reviewProgress}/${totalQuestions})`}

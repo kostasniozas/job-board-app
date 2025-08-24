@@ -11,7 +11,8 @@ import {
   CheckCircle, 
   AlertCircle, 
   FileText,
-  Send
+  Send,
+  Check
 } from 'lucide-react';
 import './MyApplications.css';
 
@@ -19,14 +20,17 @@ const MyApplications = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedApplication, setSelectedApplication] = useState(null);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [applicationToWithdraw, setApplicationToWithdraw] = useState(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  // Mock applications data
-  const mockApplications = [
+  // Mock applications data - using state so we can modify it
+  const [applications, setApplications] = useState([
     {
       id: 1,
       jobTitle: 'Senior React Developer',
       company: 'TechCorp Solutions',
-      companyLogo: '🏢',
+      companyLogo: 'TC',
       location: 'Athens, Greece',
       appliedDate: '2025-08-15',
       status: 'under_review',
@@ -47,7 +51,7 @@ const MyApplications = () => {
       id: 2,
       jobTitle: 'Digital Marketing Manager',
       company: 'CreativeMedia Inc',
-      companyLogo: '🎨',
+      companyLogo: 'CM',
       location: 'Thessaloniki, Greece',
       appliedDate: '2025-08-10',
       status: 'accepted',
@@ -68,7 +72,7 @@ const MyApplications = () => {
       id: 3,
       jobTitle: 'UX/UI Designer',
       company: 'DesignStudio Pro',
-      companyLogo: '✨',
+      companyLogo: 'DS',
       location: 'Remote',
       appliedDate: '2025-08-12',
       status: 'rejected',
@@ -88,7 +92,7 @@ const MyApplications = () => {
       id: 4,
       jobTitle: 'Python Backend Developer',
       company: 'DataFlow Systems',
-      companyLogo: '⚡',
+      companyLogo: 'DF',
       location: 'Athens, Greece',
       appliedDate: '2025-08-18',
       status: 'pending',
@@ -109,7 +113,7 @@ const MyApplications = () => {
       id: 5,
       jobTitle: 'Sales Representative',
       company: 'SalesForce Greece',
-      companyLogo: '📈',
+      companyLogo: 'SF',
       location: 'Athens, Greece',
       appliedDate: '2025-08-08',
       status: 'interview',
@@ -126,15 +130,15 @@ const MyApplications = () => {
         { date: '2025-08-22', event: 'Final Interview', status: 'current' }
       ]
     }
-  ];
+  ]);
 
   const statusOptions = [
-    { value: 'all', label: 'All Applications', count: mockApplications.length },
-    { value: 'pending', label: 'Pending', count: mockApplications.filter(app => app.status === 'pending').length },
-    { value: 'under_review', label: 'Under Review', count: mockApplications.filter(app => app.status === 'under_review').length },
-    { value: 'interview', label: 'Interview', count: mockApplications.filter(app => app.status === 'interview').length },
-    { value: 'accepted', label: 'Accepted', count: mockApplications.filter(app => app.status === 'accepted').length },
-    { value: 'rejected', label: 'Rejected', count: mockApplications.filter(app => app.status === 'rejected').length }
+    { value: 'all', label: 'All Applications', count: applications.length },
+    { value: 'pending', label: 'Pending', count: applications.filter(app => app.status === 'pending').length },
+    { value: 'under_review', label: 'Under Review', count: applications.filter(app => app.status === 'under_review').length },
+    { value: 'interview', label: 'Interview', count: applications.filter(app => app.status === 'interview').length },
+    { value: 'accepted', label: 'Accepted', count: applications.filter(app => app.status === 'accepted').length },
+    { value: 'rejected', label: 'Rejected', count: applications.filter(app => app.status === 'rejected').length }
   ];
 
   const getStatusConfig = (status) => {
@@ -148,8 +152,40 @@ const MyApplications = () => {
     return configs[status] || configs.pending;
   };
 
+  const handleWithdraw = (app) => {
+    console.log('🔥 Opening withdraw modal for:', app.jobTitle);
+    setApplicationToWithdraw(app);
+    setShowWithdrawModal(true);
+  };
+
+  // *** FIXED: Complete withdraw functionality ***
+  const confirmWithdraw = () => {
+    if (applicationToWithdraw) {
+      console.log('✅ Withdrawing application:', applicationToWithdraw.jobTitle);
+      
+      // Remove the application from the list
+      setApplications(prevApps => 
+        prevApps.filter(app => app.id !== applicationToWithdraw.id)
+      );
+      
+      // Close modal
+      setShowWithdrawModal(false);
+      setApplicationToWithdraw(null);
+      
+      // Show success message
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000);
+    }
+  };
+
+  const cancelWithdraw = () => {
+    console.log('❌ Withdraw cancelled');
+    setShowWithdrawModal(false);
+    setApplicationToWithdraw(null);
+  };
+
   // Filter applications
-  const filteredApplications = mockApplications.filter(app => {
+  const filteredApplications = applications.filter(app => {
     const matchesSearch = searchQuery === '' || 
       app.jobTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
       app.company.toLowerCase().includes(searchQuery.toLowerCase());
@@ -182,37 +218,63 @@ const MyApplications = () => {
 
   return (
     <div className="myapps-container">
-      {/* Header */}
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          backgroundColor: '#27ae60',
+          color: 'white',
+          padding: '1rem 1.5rem',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          zIndex: 10000,
+          boxShadow: '0 4px 12px rgba(39, 174, 96, 0.3)'
+        }}>
+          <Check size={20} />
+          Application withdrawn successfully!
+        </div>
+      )}
+
+      {/* ✅ UPDATED: Header with gradient background like FindJobs */}
       <div className="myapps-header">
-        <div className="myapps-title">
-          <h2>My Applications</h2>
-          <p>Track the progress of your job applications</p>
+        <div className="myapps-hero">
+          <h1>My Applications</h1>
+          <p>Track the progress of your job applications and manage your career journey</p>
         </div>
 
-        {/* Search and Filter */}
-        <div className="myapps-controls">
-          <div className="myapps-search">
-            <Search className="myapps-search-icon" size={20} />
-            <input
-              type="text"
-              placeholder="Search applications..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="myapps-search-input"
-            />
+        <div className="myapps-search-section">
+          {/* Search and Filter */}
+          <div className="myapps-search-row">
+            <div className="myapps-search-box">
+              <Search size={20} />
+              <input
+                type="text"
+                placeholder="Search applications..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="myapps-search-input"
+              />
+            </div>
+            
+            <div className="myapps-filter-box">
+              <Filter size={20} />
+              <select 
+                value={statusFilter} 
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="myapps-status-filter"
+              >
+                {statusOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label} ({option.count})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          
-          <select 
-            value={statusFilter} 
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="myapps-status-filter"
-          >
-            {statusOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label} ({option.count})
-              </option>
-            ))}
-          </select>
         </div>
       </div>
 
@@ -254,13 +316,9 @@ const MyApplications = () => {
                 <div className="myapps-card-header">
                   <div className="myapps-company-info">
                     <div className="myapps-company-logo">{app.companyLogo}</div>
-                    <div>
-                      <h4 className="myapps-job-title">{app.jobTitle}</h4>
+                    <div className="myapps-job-details">
+                      <h3 className="myapps-job-title">{app.jobTitle}</h3>
                       <p className="myapps-company-name">{app.company}</p>
-                      <div className="myapps-job-meta">
-                        <span><MapPin size={14} /> {app.location}</span>
-                        <span><Send size={14} /> Applied {getDaysAgo(app.appliedDate)}</span>
-                      </div>
                     </div>
                   </div>
                   
@@ -276,6 +334,21 @@ const MyApplications = () => {
                       Updated {formatDate(app.statusDate)}
                     </p>
                   </div>
+                </div>
+
+                <div className="myapps-job-meta">
+                  <span className="myapps-meta-item">
+                    <MapPin size={14} />
+                    {app.location}
+                  </span>
+                  <span className="myapps-meta-item">
+                    <Send size={14} />
+                    Applied {getDaysAgo(app.appliedDate)}
+                  </span>
+                  <span className="myapps-meta-item">
+                    <Building2 size={14} />
+                    {app.jobType}
+                  </span>
                 </div>
 
                 <div className="myapps-card-body">
@@ -302,9 +375,16 @@ const MyApplications = () => {
                     <Eye size={16} />
                     View Timeline
                   </button>
-                  <button className="myapps-withdraw-btn">
-                    Withdraw Application
-                  </button>
+                  
+                  {/* Only show withdraw button for non-final statuses */}
+                  {app.status !== 'accepted' && app.status !== 'rejected' && (
+                    <button 
+                      onClick={() => handleWithdraw(app)}
+                      className="myapps-withdraw-btn"
+                    >
+                      Withdraw Application
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -355,6 +435,47 @@ const MyApplications = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Withdraw Confirmation Modal */}
+      {showWithdrawModal && applicationToWithdraw && (
+        <div className="myapps-withdraw-modal-overlay" onClick={cancelWithdraw}>
+          <div className="myapps-withdraw-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="myapps-withdraw-modal-header">
+              <h3>Withdraw Application</h3>
+              <button 
+                onClick={cancelWithdraw}
+                className="myapps-modal-close"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="myapps-withdraw-modal-body">
+              <p>Are you sure you want to withdraw your application for:</p>
+              <div className="myapps-withdraw-job-info">
+                <h4>{applicationToWithdraw.jobTitle}</h4>
+                <p>{applicationToWithdraw.company}</p>
+              </div>
+              <p className="myapps-withdraw-warning">This action cannot be undone.</p>
+              
+              <div className="myapps-withdraw-actions">
+                <button 
+                  onClick={cancelWithdraw}
+                  className="myapps-withdraw-cancel-btn"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={confirmWithdraw}
+                  className="myapps-withdraw-confirm-btn"
+                >
+                  Yes, Withdraw
+                </button>
               </div>
             </div>
           </div>

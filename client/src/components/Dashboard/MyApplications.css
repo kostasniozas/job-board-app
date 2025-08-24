@@ -1,4 +1,6 @@
-/* MyApplications Component Styles */
+/* MyApplications Component Styles - UPDATED FOR UI CONSISTENCY */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 .myapps-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -6,87 +8,94 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* Header */
+/* ✅ UPDATED: Header with gradient background like FindJobs */
 .myapps-header {
+  background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
+  color: white;
+  border-radius: 20px;
+  padding: 40px;
   margin-bottom: 30px;
 }
 
-.myapps-title h2 {
-  color: #1A2A80;
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin: 0 0 8px 0;
+.myapps-hero {
+  text-align: center;
+  margin-bottom: 30px;
 }
 
-.myapps-title p {
-  color: #7A85C1;
-  font-size: 1.1rem;
-  margin: 0 0 25px 0;
+.myapps-hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
+}
+
+.myapps-hero p {
+  font-size: 1.2rem;
+  margin: 0;
+  opacity: 0.9;
   font-weight: 400;
 }
 
-/* Controls */
-.myapps-controls {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  flex-wrap: wrap;
+/* ✅ UPDATED: Search Section with backdrop blur */
+.myapps-search-section {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 25px;
+  backdrop-filter: blur(10px);
 }
 
-.myapps-search {
+.myapps-search-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 15px;
+}
+
+.myapps-search-box,
+.myapps-filter-box {
   position: relative;
-  flex: 1;
-  min-width: 300px;
+  display: flex;
+  align-items: center;
 }
 
-.myapps-search-icon {
+.myapps-search-box svg,
+.myapps-filter-box svg {
   position: absolute;
   left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #7A85C1;
+  color: rgba(255, 255, 255, 0.7);
   z-index: 2;
 }
 
-.myapps-search-input {
+.myapps-search-input,
+.myapps-status-filter {
   width: 100%;
-  padding: 14px 16px 14px 50px;
-  border: 2px solid #E1E5F0;
+  padding: 16px 16px 16px 50px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  background: white;
-  color: #1A2A80;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
   font-size: 1rem;
   font-family: 'Poppins', sans-serif;
   transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
 }
 
-.myapps-search-input:focus {
+.myapps-search-input:focus,
+.myapps-status-filter:focus {
   outline: none;
-  border-color: #3B38A0;
-  box-shadow: 0 0 0 4px rgba(59, 56, 160, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
 }
 
 .myapps-search-input::placeholder {
-  color: #7A85C1;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.myapps-status-filter {
-  padding: 14px 20px;
-  border: 2px solid #E1E5F0;
-  border-radius: 12px;
-  background: white;
-  color: #1A2A80;
-  font-size: 1rem;
-  font-family: 'Poppins', sans-serif;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 200px;
-}
-
-.myapps-status-filter:focus {
-  outline: none;
-  border-color: #3B38A0;
-  box-shadow: 0 0 0 4px rgba(59, 56, 160, 0.1);
+.myapps-status-filter option {
+  background: #1A2A80;
+  color: white;
+  padding: 8px;
 }
 
 /* Stats Overview */
@@ -189,55 +198,46 @@
 .myapps-company-info {
   display: flex;
   align-items: flex-start;
-  gap: 15px;
+  gap: 16px;
   flex: 1;
 }
 
 .myapps-company-logo {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   background: linear-gradient(135deg, #B2B0E8, #7A85C1);
-  border-radius: 12px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+  color: white;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
 .myapps-company-logo.large {
-  width: 60px;
-  height: 60px;
-  font-size: 1.8rem;
+  width: 70px;
+  height: 70px;
+  font-size: 2rem;
+}
+
+.myapps-job-details {
+  flex: 1;
 }
 
 .myapps-job-title {
   color: #1A2A80;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 600;
-  margin: 0 0 5px 0;
+  margin: 0 0 6px 0;
   line-height: 1.3;
 }
 
 .myapps-company-name {
   color: #7A85C1;
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin: 0 0 8px 0;
-  font-weight: 500;
-}
-
-.myapps-job-meta {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.myapps-job-meta span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: #7A85C1;
-  font-size: 0.85rem;
   font-weight: 500;
 }
 
@@ -265,6 +265,27 @@
   font-weight: 500;
 }
 
+/* Job Meta - Like FindJobs */
+.myapps-job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.myapps-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #7A85C1;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.myapps-meta-item svg {
+  color: #B2B0E8;
+}
+
 /* Card Body */
 .myapps-card-body {
   margin-bottom: 20px;
@@ -274,7 +295,7 @@
   color: #4A5568;
   font-size: 1rem;
   line-height: 1.6;
-  margin: 0 0 15px 0;
+  margin: 16px 0;
 }
 
 .myapps-details {
@@ -306,9 +327,9 @@
   background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
   color: white;
   border: none;
-  padding: 12px 20px;
+  padding: 12px 24px;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
@@ -316,6 +337,8 @@
   align-items: center;
   gap: 8px;
   transition: all 0.3s ease;
+  flex: 1;
+  justify-content: center;
 }
 
 .myapps-view-btn:hover {
@@ -327,13 +350,18 @@
   background: transparent;
   color: #e74c3c;
   border: 2px solid #e74c3c;
-  padding: 12px 20px;
+  padding: 12px 24px;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
+  flex: 1;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .myapps-withdraw-btn:hover {
@@ -349,10 +377,15 @@
   color: #7A85C1;
 }
 
+.myapps-empty svg {
+  color: #B2B0E8;
+  margin-bottom: 20px;
+}
+
 .myapps-empty h3 {
   color: #1A2A80;
   font-size: 1.5rem;
-  margin: 20px 0 10px 0;
+  margin: 20px 0 12px 0;
 }
 
 .myapps-empty p {
@@ -406,9 +439,14 @@
   border: none;
   color: #7A85C1;
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
   border-radius: 8px;
   transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .myapps-modal-close:hover {
@@ -545,23 +583,165 @@
   margin: 0;
 }
 
+/* Withdraw Modal Styles */
+.myapps-withdraw-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 42, 128, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.myapps-withdraw-modal {
+  background: white;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(26, 42, 128, 0.3);
+  animation: myappsWithdrawSlideUp 0.3s ease-out;
+}
+
+@keyframes myappsWithdrawSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.myapps-withdraw-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 30px;
+  border-bottom: 1px solid #E1E5F0;
+}
+
+.myapps-withdraw-modal-header h3 {
+  color: #1A2A80;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.myapps-withdraw-modal-body {
+  padding: 30px;
+}
+
+.myapps-withdraw-modal-body p {
+  color: #4A5568;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.myapps-withdraw-job-info {
+  background: #f8f9ff;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px 0;
+  border: 2px solid #E1E5F0;
+}
+
+.myapps-withdraw-job-info h4 {
+  color: #1A2A80;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.myapps-withdraw-job-info p {
+  color: #7A85C1;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.myapps-withdraw-warning {
+  color: #e74c3c !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+}
+
+.myapps-withdraw-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.myapps-withdraw-cancel-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: 1px solid #E1E5F0;
+  border-radius: 8px;
+  background: white;
+  color: #7A85C1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.myapps-withdraw-cancel-btn:hover {
+  background: #f3f4f6;
+  color: #1A2A80;
+  border-color: #1A2A80;
+}
+
+.myapps-withdraw-confirm-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.myapps-withdraw-confirm-btn:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .myapps-container {
     padding: 15px;
   }
   
-  .myapps-title h2 {
-    font-size: 1.8rem;
+  .myapps-header {
+    padding: 30px 25px;
+    border-radius: 16px;
   }
   
-  .myapps-controls {
-    flex-direction: column;
-    align-items: stretch;
+  .myapps-hero h1 {
+    font-size: 2rem;
   }
   
-  .myapps-search {
-    min-width: auto;
+  .myapps-hero p {
+    font-size: 1.1rem;
+  }
+  
+  .myapps-search-row {
+    grid-template-columns: 1fr;
   }
   
   .myapps-stats {
@@ -583,13 +763,12 @@
   }
   
   .myapps-company-info {
-    flex-direction: column;
-    gap: 10px;
+    width: 100%;
   }
   
   .myapps-job-meta {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
   
   .myapps-details {
@@ -611,20 +790,42 @@
   .myapps-modal-body {
     padding: 20px;
   }
+  
+  .myapps-withdraw-actions {
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 480px) {
-  .myapps-title h2 {
-    font-size: 1.6rem;
+  .myapps-header {
+    padding: 25px 20px;
+  }
+  
+  .myapps-hero h1 {
+    font-size: 1.8rem;
+  }
+  
+  .myapps-search-input,
+  .myapps-status-filter {
+    padding: 14px 14px 14px 45px;
   }
   
   .myapps-stats {
     grid-template-columns: 1fr;
   }
   
-  .myapps-company-info {
-    flex-direction: row;
-    align-items: center;
+  .myapps-card {
+    padding: 16px;
+  }
+  
+  .myapps-company-logo {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+  
+  .myapps-job-title {
+    font-size: 1.2rem;
   }
   
   .myapps-timeline-item {

@@ -1,4 +1,4 @@
-// InterviewReview.jsx - Complete Interview Review Dashboard for Employers
+// InterviewReview.jsx - Interview Review Dashboard for Employers
 
 import { useState } from 'react';
 import { 
@@ -17,7 +17,8 @@ import {
   ThumbsDown,
   Eye,
   Award,
-  Timer
+  Timer,
+  UserCheck
 } from 'lucide-react';
 import VideoReviewModal from './VideoReviewModal';
 import './InterviewReview.css';
@@ -181,7 +182,7 @@ function InterviewReview({ userInfo }) {
         }
       ],
       overallNotes: 'Excellent communication skills and strategic thinking. Strong cultural fit.',
-      decision: 'advance'
+      decision: null // Ready for decision after review
     },
     {
       id: 3,
@@ -189,19 +190,19 @@ function InterviewReview({ userInfo }) {
       candidateId: 'candidate_004',
       jobTitle: 'Senior Frontend Developer',
       submittedDate: '2024-02-21',
-      status: 'submitted',
+      status: 'decided',
       totalQuestions: 7,
       answeredQuestions: 6,
       totalDuration: '10:20',
-      averageRating: 0,
+      averageRating: 3.5,
       questionsData: [
         {
           id: 1,
           type: 'custom',
           question: 'Explain your experience with React hooks.',
           duration: '1:45',
-          rating: 0,
-          notes: '',
+          rating: 4,
+          notes: 'Good technical knowledge',
           videoUrl: 'mock-video-1.mp4'
         },
         {
@@ -209,8 +210,8 @@ function InterviewReview({ userInfo }) {
           type: 'custom',
           question: 'How do you handle state management in large applications?',
           duration: '2:20',
-          rating: 0,
-          notes: '',
+          rating: 3,
+          notes: 'Basic understanding, could be stronger',
           videoUrl: 'mock-video-2.mp4'
         },
         {
@@ -259,8 +260,8 @@ function InterviewReview({ userInfo }) {
           videoUrl: null
         }
       ],
-      overallNotes: '',
-      decision: null
+      overallNotes: 'Solid candidate but lacking some senior-level experience.',
+      decision: 'advance' // Decision already made
     }
   ]);
 
@@ -334,20 +335,9 @@ function InterviewReview({ userInfo }) {
     
     switch (status) {
       case 'submitted': return 'Awaiting Review';
-      case 'reviewed': return 'Reviewed - Pending Decision';
+      case 'reviewed': return 'Reviewed - Ready for Decision';
       case 'decided': return 'Decision Made';
       default: return 'Unknown';
-    }
-  };
-
-  // Get button text based on status
-  const getReviewButtonText = (interview) => {
-    if (interview.status === 'submitted') {
-      return 'Start Review';
-    } else if (interview.status === 'reviewed') {
-      return 'View Review';
-    } else {
-      return 'Review Interview';
     }
   };
 
@@ -375,8 +365,8 @@ function InterviewReview({ userInfo }) {
             <span className="interview-stat-label">Pending Review</span>
           </div>
           <div className="interview-stat-card">
-            <span className="interview-stat-number">{interviews.filter(i => i.status === 'reviewed').length}</span>
-            <span className="interview-stat-label">Reviewed</span>
+            <span className="interview-stat-number">{interviews.filter(i => isReadyForDecision(i)).length}</span>
+            <span className="interview-stat-label">Ready for Decision</span>
           </div>
           <div className="interview-stat-card">
             <span className="interview-stat-number">{interviews.filter(i => i.decision === 'advance').length}</span>
@@ -477,15 +467,16 @@ function InterviewReview({ userInfo }) {
               {/* Card Footer */}
               <div className="interview-card-footer">
                 <div className="interview-actions">
+                  {/* SINGLE BUTTON FOR ALL INTERVIEWS */}
                   <button
                     onClick={() => handleReviewInterview(interview)}
                     className="interview-btn interview-btn-primary"
                   >
                     <Play size={16} />
-                    {getReviewButtonText(interview)}
+                    {interview.status === 'submitted' ? 'Start Review' : 
+                     interview.status === 'reviewed' ? 'View Review' : 'Review Interview'}
                   </button>
 
-                  {/* Show decision buttons only if NOT decided yet and status is reviewed */}
                   {interview.status === 'reviewed' && !interview.decision && (
                     <>
                       <button
@@ -493,26 +484,25 @@ function InterviewReview({ userInfo }) {
                         className="interview-btn interview-btn-success"
                       >
                         <ThumbsUp size={16} />
-                        Advance
+                        Advance to Next Round
                       </button>
                       <button
                         onClick={() => handleMakeDecision(interview.id, 'schedule_live')}
                         className="interview-btn interview-btn-outline"
                       >
                         <Calendar size={16} />
-                        Schedule Live
+                        Schedule Live Interview
                       </button>
                       <button
                         onClick={() => handleMakeDecision(interview.id, 'reject')}
                         className="interview-btn interview-btn-danger"
                       >
                         <ThumbsDown size={16} />
-                        Reject
+                        Reject Application
                       </button>
                     </>
                   )}
 
-                  {/* Show decision result if already decided */}
                   {interview.decision && (
                     <div className="interview-decision-display">
                       {interview.decision === 'advance' && <Award size={16} color="#28a745" />}

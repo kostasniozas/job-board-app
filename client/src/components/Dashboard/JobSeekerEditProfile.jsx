@@ -13,15 +13,16 @@ import {
   Linkedin,
   FileText,
   Save,
-  Upload,
   X,
   Plus,
-  Edit3
+  Edit3,
+  Check
 } from 'lucide-react';
 import './JobSeekerEditProfile.css';
 
 const JobSeekerEditProfile = () => {
   const [activeTab, setActiveTab] = useState('personal');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [profileData, setProfileData] = useState({
     // Personal Information
     firstName: 'John',
@@ -190,8 +191,9 @@ const JobSeekerEditProfile = () => {
   };
 
   const handleSave = () => {
-    alert('Profile updated successfully!');
     console.log('Updated profile data:', profileData);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
   };
 
   const renderPersonalTab = () => (
@@ -609,28 +611,38 @@ const JobSeekerEditProfile = () => {
           </div>
         </div>
       </div>
-
-      <div className="jseditprofile-section">
-        <h3>Resume/CV</h3>
-        <div className="jseditprofile-upload-area">
-          <div className="jseditprofile-upload-box">
-            <Upload size={32} />
-            <h4>Upload your Resume/CV</h4>
-            <p>PDF, DOC, or DOCX files up to 5MB</p>
-            <button className="jseditprofile-upload-btn">
-              Choose File
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 
   return (
     <div className="jseditprofile-container">
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          backgroundColor: '#27ae60',
+          color: 'white',
+          padding: '1rem 1.5rem',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          zIndex: 10000,
+          boxShadow: '0 4px 12px rgba(39, 174, 96, 0.3)'
+        }}>
+          <Check size={20} />
+          Profile updated successfully!
+        </div>
+      )}
+
+      {/* ✅ UPDATED: Header with gradient background like other components */}
       <div className="jseditprofile-header">
-        <h2>Edit Profile</h2>
-        <p>Keep your profile updated to attract the best job opportunities</p>
+        <div className="jseditprofile-hero">
+          <h1>Edit Profile</h1>
+          <p>Keep your profile updated to attract the best job opportunities</p>
+        </div>
       </div>
 
       <div className="jseditprofile-content">

@@ -91,11 +91,10 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, userInfo
     onClose();
   };
 
-  // Calculate review progress
-  const reviewProgress = interview.questionsData.filter(q => q.rating > 0).length;
-  const totalQuestions = interview.questionsData.length;
-  const progressPercentage = (reviewProgress / totalQuestions) * 100;
-
+// Calculate review progress - ΔΙΟΡΘΩΜΕΝΟ
+const reviewProgress = interview?.questionsData?.filter(q => q.rating > 0).length || 0;
+const totalQuestions = interview?.questionsData?.length || 7;
+const progressPercentage = totalQuestions > 0 ? (reviewProgress / totalQuestions) * 100 : 0;
   if (!isOpen) return null;
 
   return (
@@ -105,15 +104,7 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, userInfo
         <div className="video-review-header">
           <div className="video-review-title">
             <h2>Interview Review: {interview.candidateInitials}</h2>
-            <div className="video-review-progress">
-              <span>{reviewProgress}/{totalQuestions} questions reviewed</span>
-              <div className="video-progress-bar">
-                <div 
-                  className="video-progress-fill"
-                  style={{ width: `${progressPercentage}%` }}
-                ></div>
-              </div>
-            </div>
+         
           </div>
           <button onClick={onClose} className="video-review-close">
             <X size={24} />
@@ -339,13 +330,7 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, userInfo
         {/* Modal Footer */}
         <div className="video-review-footer">
           <div className="video-review-stats">
-            <span>{reviewProgress}/{totalQuestions} questions reviewed</span>
-            {reviewProgress === totalQuestions && (
-              <span className="video-review-complete">
-                <CheckCircle size={16} />
-                Review Complete
-              </span>
-            )}
+         <span>Interview Review Session</span>
           </div>
           
           <div className="video-review-actions">
@@ -355,7 +340,7 @@ function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, userInfo
             <button 
               onClick={handleFinishReview}
               className="video-btn video-btn-primary"
-              disabled={reviewProgress === 0}
+         disabled={false}
             >
               <CheckCircle size={16} />
               Complete Review

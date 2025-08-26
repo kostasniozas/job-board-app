@@ -1,447 +1,554 @@
-// VideoReviewModal.jsx - Fixed version με instant state updates
+// InterviewReview.jsx - FIXED: Added missing isReadyForDecision function
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
-  X, 
   Play, 
-  Pause, 
-  SkipForward, 
-  SkipBack, 
+  Clock, 
   Star, 
-  MessageSquare, 
-  Timer,
-  CheckCircle,
-  AlertCircle,
-  Volume2,
-  ChevronLeft,
-  ChevronRight,
+  CheckCircle, 
+  XCircle, 
+  MessageSquare,
+  Calendar,
+  User,
+  Video,
+  Filter,
+  Search,
   ThumbsUp,
   ThumbsDown,
-  Calendar
+  Eye,
+  Award,
+  Timer,
+  UserCheck
 } from 'lucide-react';
-import './VideoReviewModal.css';
+import VideoReviewModal from './VideoReviewModal';
+import './InterviewReview.css';
 
-function VideoReviewModal({ interview, isOpen, onClose, onUpdateRating, onMakeDecision, userInfo }) {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [volume, setVolume] = useState(1);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  
-  // Rating and notes for current question
-  const [currentRating, setCurrentRating] = useState(0);
-  const [currentNotes, setCurrentNotes] = useState('');
-  const [overallNotes, setOverallNotes] = useState('');
-
-  // Early return if no valid data
-  if (!interview || !interview.questionsData || interview.questionsData.length === 0) {
-    return null;
-  }
-
-  const currentQuestion = interview.questionsData[currentQuestionIndex];
-
-  // Initialize with existing data when question changes
-  useEffect(() => {
-    if (currentQuestion) {
-      setCurrentRating(currentQuestion.rating || 0);
-      setCurrentNotes(currentQuestion.notes || '');
+function InterviewReview({ userInfo }) {
+  // Mock interview submissions data
+  const [interviews, setInterviews] = useState([
+    {
+      id: 1,
+      candidateInitials: 'M.K.',
+      candidateId: 'candidate_001',
+      jobTitle: 'Senior Frontend Developer',
+      submittedDate: '2024-02-22',
+      status: 'submitted', // submitted, reviewed, decided
+      totalQuestions: 7,
+      answeredQuestions: 7,
+      totalDuration: '12:45',
+      averageRating: 0, // 0 means not rated yet
+      questionsData: [
+        {
+          id: 1,
+          type: 'custom',
+          question: 'Tell us about your experience with React and how you handle state management.',
+          duration: '2:15',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-1.mp4'
+        },
+        {
+          id: 2,
+          type: 'custom',
+          question: 'Describe a challenging project you worked on and how you overcame obstacles.',
+          duration: '3:20',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-2.mp4'
+        },
+        {
+          id: 3,
+          type: 'custom',
+          question: 'How do you ensure code quality and what tools do you use for testing?',
+          duration: '2:45',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-3.mp4'
+        },
+        {
+          id: 4,
+          type: 'custom',
+          question: 'Walk us through your approach to debugging complex frontend issues.',
+          duration: '1:50',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-4.mp4'
+        },
+        {
+          id: 5,
+          type: 'random',
+          question: 'Tell us about a time you had to learn something new quickly.',
+          duration: '1:35',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-5.mp4'
+        },
+        {
+          id: 6,
+          type: 'random',
+          question: 'How do you handle tight deadlines and pressure?',
+          duration: '1:45',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-6.mp4'
+        },
+        {
+          id: 7,
+          type: 'random',
+          question: 'Describe your ideal work environment.',
+          duration: '1:15',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-7.mp4'
+        }
+      ],
+      overallNotes: '',
+      decision: null // null, 'advance', 'reject', 'schedule_live'
+    },
+    {
+      id: 2,
+      candidateInitials: 'J.A.',
+      candidateId: 'candidate_002',
+      jobTitle: 'Marketing Manager',
+      submittedDate: '2024-02-20',
+      status: 'reviewed',
+      totalQuestions: 7,
+      answeredQuestions: 7,
+      totalDuration: '15:30',
+      averageRating: 4.2,
+      questionsData: [
+        {
+          id: 1,
+          type: 'custom',
+          question: 'Describe your experience with digital marketing campaigns.',
+          duration: '2:45',
+          rating: 4,
+          notes: 'Good examples, clear strategy understanding',
+          videoUrl: 'mock-video-1.mp4'
+        },
+        {
+          id: 2,
+          type: 'custom',
+          question: 'How do you measure marketing campaign success?',
+          duration: '3:10',
+          rating: 5,
+          notes: 'Excellent knowledge of KPIs and analytics',
+          videoUrl: 'mock-video-2.mp4'
+        },
+        {
+          id: 3,
+          type: 'random',
+          question: 'Tell us about a time you had to learn something new quickly.',
+          duration: '2:15',
+          rating: 4,
+          notes: 'Good adaptability example',
+          videoUrl: 'mock-video-3.mp4'
+        },
+        {
+          id: 4,
+          type: 'random',
+          question: 'How do you handle tight deadlines and pressure?',
+          duration: '2:00',
+          rating: 4,
+          notes: 'Clear examples provided',
+          videoUrl: 'mock-video-4.mp4'
+        },
+        {
+          id: 5,
+          type: 'custom',
+          question: 'What marketing tools and platforms do you prefer?',
+          duration: '2:30',
+          rating: 5,
+          notes: 'Comprehensive knowledge of modern tools',
+          videoUrl: 'mock-video-5.mp4'
+        },
+        {
+          id: 6,
+          type: 'random',
+          question: 'Describe your ideal work environment.',
+          duration: '1:45',
+          rating: 3,
+          notes: 'Standard response',
+          videoUrl: 'mock-video-6.mp4'
+        },
+        {
+          id: 7,
+          type: 'custom',
+          question: 'How do you stay updated with marketing trends?',
+          duration: '1:15',
+          rating: 4,
+          notes: 'Good resources mentioned',
+          videoUrl: 'mock-video-7.mp4'
+        }
+      ],
+      overallNotes: 'Excellent communication skills and strategic thinking. Strong cultural fit.',
+      decision: null // Ready for decision after review
+    },
+    {
+      id: 3,
+      candidateInitials: 'D.N.',
+      candidateId: 'candidate_004',
+      jobTitle: 'Senior Frontend Developer',
+      submittedDate: '2024-02-21',
+      status: 'decided',
+      totalQuestions: 7,
+      answeredQuestions: 6,
+      totalDuration: '10:20',
+      averageRating: 3.5,
+      questionsData: [
+        {
+          id: 1,
+          type: 'custom',
+          question: 'Explain your experience with React hooks.',
+          duration: '1:45',
+          rating: 4,
+          notes: 'Good technical knowledge',
+          videoUrl: 'mock-video-1.mp4'
+        },
+        {
+          id: 2,
+          type: 'custom',
+          question: 'How do you handle state management in large applications?',
+          duration: '2:20',
+          rating: 3,
+          notes: 'Basic understanding, could be stronger',
+          videoUrl: 'mock-video-2.mp4'
+        },
+        {
+          id: 3,
+          type: 'random',
+          question: 'Tell us about a time you had to learn something new quickly.',
+          duration: '1:35',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-3.mp4'
+        },
+        {
+          id: 4,
+          type: 'custom',
+          question: 'What testing frameworks do you prefer and why?',
+          duration: '2:10',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-4.mp4'
+        },
+        {
+          id: 5,
+          type: 'random',
+          question: 'How do you handle tight deadlines and pressure?',
+          duration: '1:50',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-5.mp4'
+        },
+        {
+          id: 6,
+          type: 'custom',
+          question: 'Describe your approach to code reviews.',
+          duration: '0:50',
+          rating: 0,
+          notes: '',
+          videoUrl: 'mock-video-6.mp4'
+        },
+        {
+          id: 7,
+          type: 'random',
+          question: 'Describe your ideal work environment.',
+          duration: '0:00', // Not answered
+          rating: 0,
+          notes: '',
+          videoUrl: null
+        }
+      ],
+      overallNotes: 'Solid candidate but lacking some senior-level experience.',
+      decision: 'advance' // Decision already made
     }
-  }, [currentQuestionIndex, currentQuestion]);
+  ]);
 
-  // Initialize overall notes
-  useEffect(() => {
-    setOverallNotes(interview.overallNotes || '');
-  }, [interview]);
+  // State management
+  const [selectedInterview, setSelectedInterview] = useState(null);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // Prevent background scrolling when modal is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
+  // ✅ FIXED: Added missing isReadyForDecision function
+  const isReadyForDecision = (interview) => {
+    return interview.status === 'reviewed' && !interview.decision;
+  };
+
+  // Filter interviews
+  const filteredInterviews = interviews.filter(interview => {
+    const matchesStatus = statusFilter === 'all' || interview.status === statusFilter;
+    const matchesSearch = interview.candidateInitials.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         interview.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
+
+  // Handle interview actions
+  const handleReviewInterview = (interview) => {
+    setSelectedInterview(interview);
+    setShowVideoModal(true);
+  };
+
+  const handleMakeDecision = (interviewId, decision) => {
+    setInterviews(prev => prev.map(interview =>
+      interview.id === interviewId 
+        ? { ...interview, decision, status: 'decided' }
+        : interview
+    ));
+  };
+
+  const handleUpdateRating = (interviewId, questionId, rating, notes) => {
+    setInterviews(prev => prev.map(interview => {
+      if (interview.id === interviewId) {
+        const updatedQuestions = interview.questionsData.map(q =>
+          q.id === questionId ? { ...q, rating, notes } : q
+        );
+        const ratedQuestions = updatedQuestions.filter(q => q.rating > 0);
+        const avgRating = ratedQuestions.length > 0 
+          ? ratedQuestions.reduce((sum, q) => sum + q.rating, 0) / ratedQuestions.length 
+          : 0;
+        return {
+          ...interview,
+          questionsData: updatedQuestions,
+          averageRating: avgRating,
+          status: ratedQuestions.length > 0 ? 'reviewed' : 'submitted'
+        };
+      }
+      return interview;
+    }));
+  };
+
+  // Get status badge class
+  const getStatusBadge = (status, decision) => {
+    if (decision === 'advance') return 'interview-status-advanced';
+    if (decision === 'reject') return 'interview-status-rejected';
+    if (decision === 'schedule_live') return 'interview-status-scheduled';
+    
+    switch (status) {
+      case 'submitted': return 'interview-status-pending';
+      case 'reviewed': return 'interview-status-reviewed';
+      case 'decided': return 'interview-status-decided';
+      default: return 'interview-status-default';
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
+  };
 
-  // FIXED: Star click handler που ενημερώνει αμέσως το state
-  const handleStarClick = (rating) => {
-    setCurrentRating(rating);
-    // INSTANT UPDATE - ενημέρωσε το κύριο state αμέσως!
-    if (onUpdateRating) {
-      onUpdateRating(interview.id, currentQuestion.id, rating, currentNotes);
+  const getStatusText = (status, decision) => {
+    if (decision === 'advance') return 'Advanced to Next Round';
+    if (decision === 'reject') return 'Rejected';
+    if (decision === 'schedule_live') return 'Live Interview Scheduled';
+    
+    switch (status) {
+      case 'submitted': return 'Awaiting Review';
+      case 'reviewed': return 'Reviewed - Ready for Decision';
+      case 'decided': return 'Decision Made';
+      default: return 'Unknown';
     }
   };
 
-  // FIXED: Notes change handler που ενημερώνει το state
-  const handleNotesChange = (notes) => {
-    setCurrentNotes(notes);
-    // Ενημέρωσε το state αν υπάρχει rating
-    if (currentRating > 0 && onUpdateRating) {
-      onUpdateRating(interview.id, currentQuestion.id, currentRating, notes);
-    }
+  // Format date
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
-
-  // Mock video player handlers
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleSeek = (time) => {
-    setCurrentTime(time);
-  };
-
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < interview.questionsData.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-  };
-
-  const handlePrevQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
-
-  const handleFinishReview = () => {
-    onClose();
-  };
-
-<<<<<<< HEAD
-  const handleDecision = (decision) => {
-    if (onMakeDecision) {
-      onMakeDecision(interview.id, decision);
-    }
-    onClose();
-  };
-
-  // FIXED: Calculate review progress από το actual interview state
-  const reviewProgress = interview.questionsData.filter(q => q.rating > 0).length;
-  const totalQuestions = interview.questionsData.length;
-  const progressPercentage = (reviewProgress / totalQuestions) * 100;
-  const isReviewComplete = reviewProgress === totalQuestions;
-
-=======
-// Calculate review progress - ΔΙΟΡΘΩΜΕΝΟ
-const reviewProgress = interview?.questionsData?.filter(q => q.rating > 0).length || 0;
-const totalQuestions = interview?.questionsData?.length || 7;
-const progressPercentage = totalQuestions > 0 ? (reviewProgress / totalQuestions) * 100 : 0;
->>>>>>> 99959e553ce885295c3350d5d386c282bdbd9cbb
-  if (!isOpen) return null;
 
   return (
-    <div className="video-interview-overlay">
-      <div className="video-interview-modal">
-        {/* Modal Header */}
-        <div className="video-interview-header">
-          <div className="video-interview-title">
-            <h2>Interview Review: {interview.candidateInitials}</h2>
-<<<<<<< HEAD
-            <div className="video-interview-progress">
-              <span>{reviewProgress}/{totalQuestions} questions reviewed</span>
-              <div className="video-interview-progress-bar">
-                <div 
-                  className="video-interview-progress-fill"
-                  style={{ width: `${progressPercentage}%` }}
-                ></div>
-              </div>
-            </div>
-=======
-         
->>>>>>> 99959e553ce885295c3350d5d386c282bdbd9cbb
-          </div>
-          <button onClick={onClose} className="video-interview-close">
-            <X size={24} />
-          </button>
+    <div className="interview-review-container">
+      {/* Header */}
+      <div className="interview-review-header">
+        <div className="interview-review-header-content">
+          <h1>Interview Reviews</h1>
+          <p>Review video interview submissions and make hiring decisions</p>
         </div>
-
-        {/* Modal Content */}
-        <div className="video-interview-content">
-          {/* Left Side - Video Player */}
-          <div className="video-interview-player-section">
-            <div className="video-interview-question-header">
-              <div className="video-interview-question-info">
-                <span className="video-interview-question-number">Question {currentQuestionIndex + 1} of {totalQuestions}</span>
-                <span className={`video-interview-question-type ${currentQuestion.type}`}>
-                  {currentQuestion.type === 'custom' ? 'Custom' : currentQuestion.type === 'random' ? 'Random' : 'Standard'}
-                </span>
-              </div>
-              <div className="video-interview-question-duration">
-                <Timer size={16} />
-                <span>{currentQuestion.duration}</span>
-              </div>
-            </div>
-
-            <div className="video-interview-question-text">
-              <h3>"{currentQuestion.question}"</h3>
-            </div>
-
-            {/* Mock Video Player */}
-            <div className="video-interview-player">
-              <div className="video-interview-screen">
-                <div className="video-interview-placeholder">
-                  <div className="video-interview-candidate-avatar">
-                    {interview.candidateInitials}
-                  </div>
-                  <p>Video Response</p>
-                  <div className="video-interview-duration-display">
-                    {Math.floor(currentTime / 60)}:{(currentTime % 60).toString().padStart(2, '0')} / 
-                    {currentQuestion.duration}
-                  </div>
-                </div>
-              </div>
-
-              {/* Video Controls */}
-              <div className="video-interview-controls">
-                <div className="video-interview-controls-main">
-                  <button onClick={handlePlayPause} className="video-interview-control-btn video-interview-play-btn">
-                    {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-                  </button>
-                  
-                  <button 
-                    onClick={() => setCurrentTime(Math.max(0, currentTime - 10))} 
-                    className="video-interview-control-btn"
-                  >
-                    <SkipBack size={16} />
-                  </button>
-                  
-                  <button 
-                    onClick={() => setCurrentTime(currentTime + 10)} 
-                    className="video-interview-control-btn"
-                  >
-                    <SkipForward size={16} />
-                  </button>
-
-                  <div className="video-interview-seek-bar">
-                    <input
-                      type="range"
-                      min="0"
-                      max="180"
-                      value={currentTime}
-                      onChange={(e) => handleSeek(parseInt(e.target.value))}
-                      className="video-interview-seek-input"
-                    />
-                  </div>
-
-                  <div className="video-interview-volume-control">
-                    <Volume2 size={16} />
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.1"
-                      value={volume}
-                      onChange={(e) => setVolume(parseFloat(e.target.value))}
-                      className="video-interview-volume-input"
-                    />
-                  </div>
-
-                  <select 
-                    value={playbackSpeed}
-                    onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
-                    className="video-interview-speed-select"
-                  >
-                    <option value="0.5">0.5x</option>
-                    <option value="0.75">0.75x</option>
-                    <option value="1">1x</option>
-                    <option value="1.25">1.25x</option>
-                    <option value="1.5">1.5x</option>
-                    <option value="2">2x</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <div className="video-interview-navigation">
-              <button 
-                onClick={handlePrevQuestion}
-                disabled={currentQuestionIndex === 0}
-                className="video-interview-nav-btn"
-              >
-                <ChevronLeft size={16} />
-                Previous Question
-              </button>
-              <button 
-                onClick={handleNextQuestion}
-                disabled={currentQuestionIndex === totalQuestions - 1}
-                className="video-interview-nav-btn"
-              >
-                Next Question
-                <ChevronRight size={16} />
-              </button>
-            </div>
+        
+        <div className="interview-review-stats">
+          <div className="interview-stat-card">
+            <span className="interview-stat-number">{interviews.filter(i => i.status === 'submitted').length}</span>
+            <span className="interview-stat-label">Pending Review</span>
           </div>
-
-          {/* Right Side - Review Panel */}
-          <div className="video-interview-review-panel">
-            <div className="video-interview-review-section">
-              <h4>Rate This Answer</h4>
-              <div className="video-interview-rating-stars">
-                {[1, 2, 3, 4, 5].map(star => (
-                  <button
-                    key={star}
-                    onClick={() => handleStarClick(star)}
-                    className={`video-interview-star ${star <= currentRating ? 'video-interview-star-active' : ''}`}
-                  >
-                    <Star size={24} />
-                  </button>
-                ))}
-              </div>
-              {currentRating > 0 && (
-                <div className="video-interview-rating-text">
-                  <span>{currentRating}/5 stars - </span>
-                  <span className="video-interview-rating-description">
-                    {currentRating >= 5 ? 'Excellent' : 
-                     currentRating >= 4 ? 'Good' : 
-                     currentRating >= 3 ? 'Average' : 
-                     currentRating >= 2 ? 'Below Average' : 'Poor'}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="video-interview-review-section">
-              <h4>Notes for this answer</h4>
-              <textarea
-                value={currentNotes}
-                onChange={(e) => handleNotesChange(e.target.value)}
-                placeholder="Add your thoughts about this answer..."
-                className="video-interview-notes-textarea"
-                rows="4"
-              />
-            </div>
-
-            <div className="video-interview-review-section">
-              <h4>Quick Assessment</h4>
-              <div className="video-interview-quick-tags">
-                <button className="video-interview-tag">Clear Communication</button>
-                <button className="video-interview-tag">Technical Knowledge</button>
-                <button className="video-interview-tag">Problem Solving</button>
-                <button className="video-interview-tag">Cultural Fit</button>
-                <button className="video-interview-tag">Leadership Potential</button>
-                <button className="video-interview-tag">Experience Relevant</button>
-              </div>
-            </div>
-
-            <div className="video-interview-review-section">
-              <h4>All Questions Overview</h4>
-              <div className="video-interview-questions-overview">
-                {interview.questionsData.map((question, index) => (
-                  <div 
-                    key={question.id}
-                    className={`video-interview-question-item ${index === currentQuestionIndex ? 'active' : ''}`}
-                    onClick={() => setCurrentQuestionIndex(index)}
-                  >
-                    <div className="video-interview-question-item-header">
-                      <span className="video-interview-question-item-number">Q{index + 1}</span>
-                      <div className="video-interview-question-item-status">
-                        {question.rating > 0 ? (
-                          <CheckCircle size={16} color="#28a745" />
-                        ) : (
-                          <AlertCircle size={16} color="#ffc107" />
-                        )}
-                      </div>
-                    </div>
-                    <p className="video-interview-question-item-text">
-                      {question.question.length > 50 
-                        ? question.question.substring(0, 50) + '...'
-                        : question.question
-                      }
-                    </p>
-                    {question.rating > 0 && (
-                      <div className="video-interview-question-item-rating">
-                        <Star size={12} fill="#fbbf24" color="#fbbf24" />
-                        <span>{question.rating}/5</span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="video-interview-review-section">
-              <h4>Overall Interview Notes</h4>
-              <textarea
-                value={overallNotes}
-                onChange={(e) => setOverallNotes(e.target.value)}
-                placeholder="Overall assessment of the candidate..."
-                className="video-interview-notes-textarea"
-                rows="3"
-              />
-            </div>
+          <div className="interview-stat-card">
+            <span className="interview-stat-number">{interviews.filter(i => isReadyForDecision(i)).length}</span>
+            <span className="interview-stat-label">Ready for Decision</span>
           </div>
-        </div>
-
-<<<<<<< HEAD
-        {/* Modal Footer - FIXED με working decision buttons */}
-        <div className="video-interview-footer">
-          <div className="video-interview-stats">
-            <span>{reviewProgress}/{totalQuestions} questions reviewed</span>
-            {isReviewComplete && (
-              <span className="video-interview-complete">
-                <CheckCircle size={16} />
-                Review Complete
-              </span>
-            )}
-=======
-        {/* Modal Footer */}
-        <div className="video-review-footer">
-          <div className="video-review-stats">
-         <span>Interview Review Session</span>
->>>>>>> 99959e553ce885295c3350d5d386c282bdbd9cbb
-          </div>
-          
-          <div className="video-interview-actions">
-            <button onClick={onClose} className="video-interview-btn video-interview-btn-outline">
-              Save & Continue Later
-            </button>
-            
-            {/* FIXED: Show decision buttons αν έχει progress */}
-            {reviewProgress > 0 && (
-              <>
-                <button 
-                  onClick={() => handleDecision('reject')}
-                  className="video-interview-btn video-interview-btn-danger"
-                >
-                  <ThumbsDown size={16} />
-                  Reject
-                </button>
-                <button 
-                  onClick={() => handleDecision('schedule_live')}
-                  className="video-interview-btn video-interview-btn-warning"
-                >
-                  <Calendar size={16} />
-                  Schedule Live
-                </button>
-                <button 
-                  onClick={() => handleDecision('advance')}
-                  className="video-interview-btn video-interview-btn-success"
-                >
-                  <ThumbsUp size={16} />
-                  Advance
-                </button>
-              </>
-            )}
-            
-            {/* FIXED: Complete Review Button */}
-            <button 
-              onClick={handleFinishReview}
-<<<<<<< HEAD
-              className="video-interview-btn video-interview-btn-primary"
-              disabled={reviewProgress === 0}
-=======
-              className="video-btn video-btn-primary"
-         disabled={false}
->>>>>>> 99959e553ce885295c3350d5d386c282bdbd9cbb
-            >
-              <CheckCircle size={16} />
-              {isReviewComplete ? 'Complete Review' : `Complete Review (${reviewProgress}/${totalQuestions})`}
-            </button>
+          <div className="interview-stat-card">
+            <span className="interview-stat-number">{interviews.filter(i => i.decision === 'advance').length}</span>
+            <span className="interview-stat-label">Advanced</span>
           </div>
         </div>
       </div>
+
+      {/* Filters */}
+      <div className="interview-review-filters">
+        <div className="interview-search-box">
+          <Search size={20} />
+          <input
+            type="text"
+            placeholder="Search by candidate or job title..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="interview-search-input"
+          />
+        </div>
+
+        <div className="interview-filter-group">
+          <Filter size={20} />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="interview-filter-select"
+          >
+            <option value="all">All Status</option>
+            <option value="submitted">Pending Review</option>
+            <option value="reviewed">Reviewed</option>
+            <option value="decided">Decided</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Interview List */}
+      <div className="interview-review-list">
+        {filteredInterviews.length > 0 ? (
+          filteredInterviews.map(interview => (
+            <div key={interview.id} className="interview-review-card">
+              {/* Card Header */}
+              <div className="interview-card-header">
+                <div className="interview-candidate-info">
+                  <div className="interview-candidate-avatar">
+                    {interview.candidateInitials}
+                  </div>
+                  <div className="interview-candidate-details">
+                    <h3 className="interview-candidate-name">
+                      Candidate {interview.candidateInitials}
+                    </h3>
+                    <p className="interview-job-title">{interview.jobTitle}</p>
+                    <div className="interview-submission-info">
+                      <Calendar size={14} />
+                      <span>Submitted on {formatDate(interview.submittedDate)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="interview-status-section">
+                  <span className={`interview-status-badge ${getStatusBadge(interview.status, interview.decision)}`}>
+                    {getStatusText(interview.status, interview.decision)}
+                  </span>
+                  {interview.averageRating > 0 && (
+                    <div className="interview-rating-display">
+                      <Star size={16} fill="#fbbf24" color="#fbbf24" />
+                      <span>{interview.averageRating.toFixed(1)}/5</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="interview-card-body">
+                <div className="interview-metrics">
+                  <div className="interview-metric">
+                    <Video size={16} />
+                    <span>{interview.answeredQuestions}/{interview.totalQuestions} questions answered</span>
+                  </div>
+                  <div className="interview-metric">
+                    <Timer size={16} />
+                    <span>{interview.totalDuration} total duration</span>
+                  </div>
+                  <div className="interview-metric">
+                    <User size={16} />
+                    <span>Profile ID: {interview.candidateId}</span>
+                  </div>
+                </div>
+
+                {interview.overallNotes && (
+                  <div className="interview-notes-preview">
+                    <MessageSquare size={16} />
+                    <span>"{interview.overallNotes}"</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Card Footer */}
+              <div className="interview-card-footer">
+                <div className="interview-actions">
+                  {/* SINGLE BUTTON FOR ALL INTERVIEWS */}
+                  <button
+                    onClick={() => handleReviewInterview(interview)}
+                    className="interview-btn interview-btn-primary"
+                  >
+                    <Play size={16} />
+                    Review Interview
+                  </button>
+
+                  {interview.status === 'reviewed' && !interview.decision && (
+                    <>
+                      <button
+                        onClick={() => handleMakeDecision(interview.id, 'advance')}
+                        className="interview-btn interview-btn-success"
+                      >
+                        <ThumbsUp size={16} />
+                        Advance to Next Round
+                      </button>
+                      <button
+                        onClick={() => handleMakeDecision(interview.id, 'schedule_live')}
+                        className="interview-btn interview-btn-outline"
+                      >
+                        <Calendar size={16} />
+                        Schedule Live Interview
+                      </button>
+                      <button
+                        onClick={() => handleMakeDecision(interview.id, 'reject')}
+                        className="interview-btn interview-btn-danger"
+                      >
+                        <ThumbsDown size={16} />
+                        Reject Application
+                      </button>
+                    </>
+                  )}
+
+                  {interview.decision && (
+                    <div className="interview-decision-display">
+                      {interview.decision === 'advance' && <Award size={16} color="#28a745" />}
+                      {interview.decision === 'reject' && <XCircle size={16} color="#dc3545" />}
+                      {interview.decision === 'schedule_live' && <Calendar size={16} color="#007bff" />}
+                      <span>{getStatusText(interview.status, interview.decision)}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="interview-empty-state">
+            <Video size={48} />
+            <h3>No interviews found</h3>
+            <p>
+              {searchTerm || statusFilter !== 'all'
+                ? 'Try adjusting your search or filters'
+                : 'No video interviews have been submitted yet'
+              }
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Video Review Modal - ENHANCED with onMakeDecision prop */}
+      {showVideoModal && selectedInterview && (
+        <VideoReviewModal
+          interview={selectedInterview}
+          isOpen={showVideoModal}
+          onClose={() => {
+            setShowVideoModal(false);
+            setSelectedInterview(null);
+          }}
+          onUpdateRating={handleUpdateRating}
+          onMakeDecision={handleMakeDecision}
+          userInfo={userInfo}
+        />
+      )}
     </div>
   );
 }
 
-export default VideoReviewModal;
+export default InterviewReview;

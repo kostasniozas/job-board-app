@@ -1,24 +1,49 @@
 /* JobSeekerEditProfile Component Styles - UPDATED FOR UI CONSISTENCY */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+/* Container & Layout - Fixed to match EditProfile */
 .jseditprofile-container {
+  padding: 0;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
   font-family: 'Poppins', sans-serif;
+  background: transparent;
+  min-height: auto;
+  width: 100%;
 }
 
-/* ✅ UPDATED: Header with gradient background like other components */
+/* ===== HEADER STYLES - Same as EditProfile ===== */
 .jseditprofile-header {
   background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
   color: white;
   border-radius: 20px;
   padding: 40px;
   margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
+}
+
+.jseditprofile-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: jseditprofileFloat 6s ease-in-out infinite;
+}
+
+@keyframes jseditprofileFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
 }
 
 .jseditprofile-hero {
   text-align: center;
+  position: relative;
+  z-index: 2;
 }
 
 .jseditprofile-hero h1 {
@@ -26,6 +51,7 @@
   font-weight: 700;
   margin: 0 0 12px 0;
   letter-spacing: -0.02em;
+  color: white;
 }
 
 .jseditprofile-hero p {
@@ -33,9 +59,10 @@
   margin: 0;
   opacity: 0.9;
   font-weight: 400;
+  color: white;
 }
 
-/* Content Layout */
+/* Content Layout - Updated to match EditProfile structure */
 .jseditprofile-content {
   display: grid;
   grid-template-columns: 250px 1fr;
@@ -43,7 +70,7 @@
   margin-bottom: 30px;
 }
 
-/* Tabs Navigation */
+/* Tabs Navigation - Updated styling to match EditProfile */
 .jseditprofile-tabs {
   display: flex;
   flex-direction: column;
@@ -55,6 +82,24 @@
   height: fit-content;
   position: sticky;
   top: 20px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.jseditprofile-tabs::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1A2A80, #3B38A0);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.jseditprofile-tabs:hover::before {
+  transform: scaleX(1);
 }
 
 .jseditprofile-tab {
@@ -78,21 +123,35 @@
 .jseditprofile-tab:hover {
   background: rgba(59, 56, 160, 0.05);
   color: #3B38A0;
+  transform: translateY(-1px);
 }
 
 .jseditprofile-tab.active {
   background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
   color: white;
   font-weight: 600;
+  box-shadow: 0 4px 15px rgba(26, 42, 128, 0.2);
 }
 
-/* Main Content */
+/* Main Content - Updated styling to match EditProfile */
 .jseditprofile-main {
   background: white;
   border: 2px solid #E1E5F0;
   border-radius: 16px;
   padding: 30px;
   min-height: 500px;
+  position: relative;
+  overflow: hidden;
+}
+
+.jseditprofile-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1A2A80, #3B38A0);
 }
 
 /* Tab Content */
@@ -102,9 +161,9 @@
   gap: 30px;
 }
 
-/* Sections */
+/* Sections - Updated styling to match EditProfile */
 .jseditprofile-section {
-  border-bottom: 1px solid #E1E5F0;
+  border-bottom: 2px solid #E1E5F0;
   padding-bottom: 30px;
 }
 
@@ -121,10 +180,12 @@
 }
 
 .jseditprofile-section h4 {
-  color: #1A2A80;
+  color: #3B38A0;
   font-size: 1.2rem;
   font-weight: 600;
-  margin: 25px 0 15px 0;
+  margin: 25px 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #E1E5F0;
 }
 
 .jseditprofile-section-header {
@@ -138,7 +199,7 @@
   margin: 0;
 }
 
-/* Form Elements */
+/* Form Elements - Updated styling to match EditProfile */
 .jseditprofile-form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -154,21 +215,24 @@
 
 .jseditprofile-form-group label {
   color: #1A2A80;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
 .jseditprofile-input,
 .jseditprofile-select,
 .jseditprofile-textarea {
-  padding: 12px 16px;
+  width: 100%;
+  padding: 16px;
   border: 2px solid #E1E5F0;
-  border-radius: 10px;
+  border-radius: 12px;
   background: white;
   color: #1A2A80;
   font-size: 1rem;
   font-family: 'Poppins', sans-serif;
+  font-weight: 400;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .jseditprofile-input:focus,
@@ -179,12 +243,18 @@
   box-shadow: 0 0 0 4px rgba(59, 56, 160, 0.1);
 }
 
-.jseditprofile-textarea {
-  resize: vertical;
-  min-height: 80px;
+.jseditprofile-input::placeholder,
+.jseditprofile-textarea::placeholder {
+  color: #7A85C1;
 }
 
-/* Skills Section */
+.jseditprofile-textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+/* Skills Section - Updated styling */
 .jseditprofile-skills-container {
   display: flex;
   flex-direction: column;
@@ -201,12 +271,13 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, rgba(26, 42, 128, 0.1), rgba(59, 56, 160, 0.1));
+  background: rgba(59, 56, 160, 0.1);
   color: #3B38A0;
-  padding: 6px 12px;
-  border-radius: 16px;
+  padding: 6px 16px;
+  border-radius: 20px;
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
+  border: 1px solid rgba(59, 56, 160, 0.2);
 }
 
 .jseditprofile-skill-remove {
@@ -243,13 +314,31 @@
   margin-bottom: 15px;
 }
 
-/* Experience Section */
+/* Experience Section - Updated styling to match EditProfile */
 .jseditprofile-experience-item {
-  background: #f8f9ff;
+  background: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%);
   border: 2px solid #E1E5F0;
   border-radius: 12px;
-  padding: 20px;
+  padding: 25px;
   margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.jseditprofile-experience-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1A2A80, #3B38A0);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.jseditprofile-experience-item:hover::before {
+  transform: scaleX(1);
 }
 
 .jseditprofile-experience-header {
@@ -264,16 +353,19 @@
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0;
+  border: none;
+  padding: 0;
 }
 
-/* Education & Certification Items */
+/* Education & Certification Items - Updated styling */
 .jseditprofile-education-item,
 .jseditprofile-certification-item {
-  background: #f8f9ff;
+  background: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%);
   border: 2px solid #E1E5F0;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 15px;
+  border-left: 4px solid #3B38A0;
 }
 
 /* Upload Area */
@@ -308,17 +400,22 @@
   margin: 0 0 20px 0;
 }
 
+/* Buttons - Updated styling to match EditProfile */
 .jseditprofile-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
   background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(26, 42, 128, 0.2);
 }
 
 .jseditprofile-upload-btn:hover {
@@ -326,20 +423,19 @@
   box-shadow: 0 8px 25px rgba(26, 42, 128, 0.3);
 }
 
-/* Buttons */
 .jseditprofile-add-btn {
-  background: rgba(59, 56, 160, 0.1);
-  color: #3B38A0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: transparent;
   border: 2px solid #3B38A0;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  color: #3B38A0;
+  border-radius: 12px;
+  font-size: 0.95rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
   transition: all 0.3s ease;
 }
 
@@ -347,14 +443,15 @@
   background: #3B38A0;
   color: white;
   transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(59, 56, 160, 0.2);
 }
 
 .jseditprofile-remove-btn {
   background: transparent;
   color: #e74c3c;
   border: 2px solid #e74c3c;
-  padding: 6px;
-  border-radius: 6px;
+  padding: 8px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -364,45 +461,73 @@
 .jseditprofile-remove-btn:hover {
   background: #e74c3c;
   color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
 }
 
-/* Actions */
+/* Actions - Updated styling to match EditProfile */
 .jseditprofile-actions {
   display: flex;
   justify-content: center;
-  padding: 20px;
+  padding: 30px;
   background: white;
   border: 2px solid #E1E5F0;
   border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.jseditprofile-actions::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1A2A80, #3B38A0);
 }
 
 .jseditprofile-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
   background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
   color: white;
   border: none;
-  padding: 16px 32px;
   border-radius: 12px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(26, 42, 128, 0.2);
 }
 
-.jseditprofile-save-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(26, 42, 128, 0.4);
+.jseditprofile-save-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(26, 42, 128, 0.3);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .jseditprofile-container {
-    padding: 15px;
+.jseditprofile-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 15px rgba(26, 42, 128, 0.2);
+}
+
+/* Responsive Design - Updated to match EditProfile */
+@media (max-width: 1024px) {
+  .jseditprofile-header {
+    padding: 35px 30px;
   }
   
+  .jseditprofile-hero h1 {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 768px) {
   .jseditprofile-header {
     padding: 30px 25px;
     border-radius: 16px;
@@ -435,7 +560,7 @@
   }
   
   .jseditprofile-main {
-    padding: 20px;
+    padding: 25px;
   }
   
   .jseditprofile-form-grid {
@@ -467,10 +592,6 @@
     font-size: 1.8rem;
   }
   
-  .jseditprofile-search-input {
-    padding: 14px 14px 14px 45px;
-  }
-  
   .jseditprofile-tabs {
     flex-direction: column;
   }
@@ -481,7 +602,7 @@
   }
   
   .jseditprofile-main {
-    padding: 15px;
+    padding: 20px;
   }
   
   .jseditprofile-section h3 {
@@ -496,8 +617,14 @@
     padding: 30px 15px;
   }
   
-  .jseditprofile-save-btn {
-    padding: 14px 24px;
-    font-size: 1rem;
+  .jseditprofile-save-btn,
+  .jseditprofile-upload-btn {
+    padding: 14px 28px;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .jseditprofile-input {
+    padding: 14px;
   }
 }

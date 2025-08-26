@@ -1,25 +1,49 @@
-/* MyApplications Component Styles - UPDATED FOR UI CONSISTENCY */
+/* MyApplications.css - UPDATED for Visual Consistency with MyJobs Dashboard */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+/* Container & Layout - Fixed for proper dashboard integration */
 .myapps-container {
+  padding: 0;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
   font-family: 'Poppins', sans-serif;
+  background: transparent;
+  min-height: auto;
+  width: 100%;
 }
 
-/* ✅ UPDATED: Header with gradient background like FindJobs */
+/* ===== HEADER STYLES - Same as MyJobs ===== */
 .myapps-header {
   background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
   color: white;
   border-radius: 20px;
   padding: 40px;
   margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.myapps-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: myappsFloat 6s ease-in-out infinite;
+}
+
+@keyframes myappsFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
 }
 
 .myapps-hero {
   text-align: center;
   margin-bottom: 30px;
+  position: relative;
+  z-index: 2;
 }
 
 .myapps-hero h1 {
@@ -27,6 +51,7 @@
   font-weight: 700;
   margin: 0 0 12px 0;
   letter-spacing: -0.02em;
+  color: white;
 }
 
 .myapps-hero p {
@@ -34,20 +59,31 @@
   margin: 0;
   opacity: 0.9;
   font-weight: 400;
+  color: white;
 }
 
-/* ✅ UPDATED: Search Section with backdrop blur */
+/* Search Section - Updated to match MyJobs filters */
 .myapps-search-section {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 25px;
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 2;
 }
 
 .myapps-search-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 15px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.myapps-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
 }
 
 .myapps-search-box,
@@ -57,12 +93,28 @@
   align-items: center;
 }
 
-.myapps-search-box svg,
-.myapps-filter-box svg {
+.myapps-search-box {
+  flex: 1;
+  max-width: 400px;
+}
+
+.myapps-search-box svg {
   position: absolute;
   left: 16px;
   color: rgba(255, 255, 255, 0.7);
   z-index: 2;
+}
+
+.myapps-filter-box {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.myapps-filter-group svg {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .myapps-search-input,
@@ -75,9 +127,14 @@
   color: white;
   font-size: 1rem;
   font-family: 'Poppins', sans-serif;
+  font-weight: 500;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   cursor: pointer;
+}
+
+.myapps-status-filter {
+  min-width: 200px;
 }
 
 .myapps-search-input:focus,
@@ -96,70 +153,83 @@
   background: #1A2A80;
   color: white;
   padding: 8px;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* Stats Overview */
+/* ===== STATS OVERVIEW - Updated to match MyJobs summary ===== */
 .myapps-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
 }
 
 .myapps-stat-card {
   background: white;
   border: 2px solid #E1E5F0;
   border-radius: 16px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
+  padding: 25px;
+  text-align: center;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.myapps-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1A2A80, #3B38A0);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
 }
 
 .myapps-stat-card:hover {
   border-color: #3B38A0;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(26, 42, 128, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(26, 42, 128, 0.15);
 }
 
-.myapps-stat-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+.myapps-stat-card:hover::before {
+  transform: scaleX(1);
 }
 
 .myapps-stat-info h3 {
-  color: #1A2A80;
-  font-size: 1.8rem;
+  display: block;
+  font-size: 2.2rem;
   font-weight: 700;
-  margin: 0;
+  color: #3B38A0;
+  margin: 0 0 8px 0;
   line-height: 1;
 }
 
 .myapps-stat-info p {
   color: #7A85C1;
-  font-size: 0.9rem;
-  margin: 4px 0 0 0;
+  font-size: 1rem;
   font-weight: 500;
+  margin: 0;
 }
 
-/* Applications List */
+/* Remove the old icon styling */
+.myapps-stat-icon {
+  display: none;
+}
+
+/* ===== APPLICATIONS LIST - Updated to match MyJobs ===== */
 .myapps-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
 }
 
 .myapps-card {
   background: white;
   border: 2px solid #E1E5F0;
   border-radius: 16px;
-  padding: 25px;
+  padding: 30px;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -193,33 +263,35 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 20px;
+  gap: 20px;
 }
 
 .myapps-company-info {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 20px;
   flex: 1;
 }
 
 .myapps-company-logo {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #B2B0E8, #7A85C1);
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #1A2A80, #3B38A0);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: white;
   font-weight: 700;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(26, 42, 128, 0.2);
 }
 
 .myapps-company-logo.large {
-  width: 70px;
-  height: 70px;
-  font-size: 2rem;
+  width: 80px;
+  height: 80px;
+  font-size: 2.2rem;
 }
 
 .myapps-job-details {
@@ -230,14 +302,14 @@
   color: #1A2A80;
   font-size: 1.4rem;
   font-weight: 600;
-  margin: 0 0 6px 0;
+  margin: 0 0 8px 0;
   line-height: 1.3;
 }
 
 .myapps-company-name {
   color: #7A85C1;
   font-size: 1.1rem;
-  margin: 0 0 8px 0;
+  margin: 0 0 12px 0;
   font-weight: 500;
 }
 
@@ -250,27 +322,31 @@
 .myapps-status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 8px 16px;
   border-radius: 20px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
   margin-bottom: 8px;
+  border: 2px solid;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
 }
 
 .myapps-status-date {
   color: #7A85C1;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   margin: 0;
   font-weight: 500;
 }
 
-/* Job Meta - Like FindJobs */
+/* Job Meta */
 .myapps-job-meta {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 16px;
-  margin-bottom: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 .myapps-meta-item {
@@ -278,7 +354,7 @@
   align-items: center;
   gap: 6px;
   color: #7A85C1;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 500;
 }
 
@@ -286,28 +362,38 @@
   color: #B2B0E8;
 }
 
+.myapps-separator {
+  color: #E1E5F0;
+  font-weight: 600;
+}
+
 /* Card Body */
 .myapps-card-body {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .myapps-job-description {
   color: #4A5568;
   font-size: 1rem;
   line-height: 1.6;
-  margin: 16px 0;
+  margin: 0 0 20px 0;
 }
 
 .myapps-details {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(59, 56, 160, 0.1);
 }
 
 .myapps-detail-item {
   color: #4A5568;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   line-height: 1.5;
+  font-weight: 500;
 }
 
 .myapps-detail-item strong {
@@ -315,30 +401,40 @@
   font-weight: 600;
 }
 
-/* Card Actions */
+/* ===== CARD ACTIONS - Updated to match MyJobs buttons ===== */
 .myapps-card-actions {
   display: flex;
-  gap: 12px;
-  padding-top: 20px;
-  border-top: 1px solid #E1E5F0;
+  gap: 16px;
+  padding-top: 25px;
+  border-top: 2px solid #E1E5F0;
+}
+
+/* Single button - make it larger */
+.myapps-card-actions .myapps-view-btn:only-child {
+  flex: 1;
+  min-width: 200px;
 }
 
 .myapps-view-btn {
-  background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 0.95rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
   transition: all 0.3s ease;
+  text-decoration: none;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
   flex: 1;
-  justify-content: center;
+  background: linear-gradient(135deg, #1A2A80 0%, #3B38A0 100%);
+  color: white;
 }
 
 .myapps-view-btn:hover {
@@ -347,33 +443,62 @@
 }
 
 .myapps-withdraw-btn {
-  background: transparent;
-  color: #e74c3c;
-  border: 2px solid #e74c3c;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 0.95rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
   flex: 1;
-  justify-content: center;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  background: transparent;
+  color: #e74c3c;
+  border: 2px solid #e74c3c;
 }
 
 .myapps-withdraw-btn:hover {
   background: #e74c3c;
   color: white;
   transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
 }
 
-/* Empty State */
+/* Button Shimmer Effect */
+.myapps-view-btn::before,
+.myapps-withdraw-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent);
+  transition: left 0.5s ease;
+}
+
+.myapps-view-btn:hover::before,
+.myapps-withdraw-btn:hover::before {
+  left: 100%;
+}
+
+/* ===== EMPTY STATE - Updated to match MyJobs ===== */
 .myapps-empty {
   text-align: center;
-  padding: 60px 20px;
+  padding: 80px 40px;
+  background: white;
+  border: 2px solid #E1E5F0;
+  border-radius: 20px;
   color: #7A85C1;
 }
 
@@ -385,15 +510,17 @@
 .myapps-empty h3 {
   color: #1A2A80;
   font-size: 1.5rem;
+  font-weight: 600;
   margin: 20px 0 12px 0;
 }
 
 .myapps-empty p {
   font-size: 1.1rem;
   margin: 0;
+  font-weight: 400;
 }
 
-/* Modal */
+/* ===== MODAL STYLES - Updated for consistency ===== */
 .myapps-modal-overlay {
   position: fixed;
   top: 0;
@@ -412,24 +539,37 @@
 .myapps-modal {
   background: white;
   border-radius: 20px;
-  max-width: 600px;
+  max-width: 700px;
   width: 100%;
-  max-height: 80vh;
+  max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(26, 42, 128, 0.3);
+  box-shadow: 0 25px 60px rgba(26, 42, 128, 0.3);
+  animation: myappsModalSlideUp 0.3s ease-out;
+}
+
+@keyframes myappsModalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .myapps-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 25px 30px;
+  padding: 30px;
   border-bottom: 2px solid #E1E5F0;
+  background: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%);
 }
 
 .myapps-modal-header h3 {
   color: #1A2A80;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 600;
   margin: 0;
 }
@@ -447,10 +587,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 28px;
+  line-height: 1;
 }
 
 .myapps-modal-close:hover {
-  background: #E1E5F0;
+  background: rgba(26, 42, 128, 0.1);
   color: #1A2A80;
 }
 
@@ -460,67 +602,86 @@
 
 /* Application Info in Modal */
 .myapps-application-info {
-  margin-bottom: 30px;
+  margin-bottom: 35px;
 }
 
 .myapps-company-details {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 20px;
+  margin-bottom: 25px;
+  padding: 25px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%);
+  border-radius: 16px;
+  border: 2px solid #E1E5F0;
 }
 
 .myapps-company-details h4 {
   color: #1A2A80;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 600;
   margin: 0;
 }
 
 .myapps-company-details p {
   color: #7A85C1;
-  margin: 5px 0 0 0;
+  margin: 6px 0 0 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.myapps-application-notes {
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #3B38A0;
 }
 
 .myapps-application-notes h5 {
   color: #1A2A80;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  margin: 0 0 10px 0;
+  margin: 0 0 12px 0;
 }
 
 .myapps-application-notes p {
   color: #4A5568;
   line-height: 1.6;
   margin: 0;
+  font-size: 0.95rem;
 }
 
-/* Timeline */
+/* Timeline - Enhanced styling */
+.myapps-timeline {
+  margin-top: 25px;
+}
+
 .myapps-timeline h5 {
   color: #1A2A80;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin: 0 0 20px 0;
+  margin: 0 0 25px 0;
 }
 
 .myapps-timeline-items {
   position: relative;
+  padding-left: 10px;
 }
 
 .myapps-timeline-items::before {
   content: '';
   position: absolute;
-  left: 15px;
+  left: 18px;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background: #E1E5F0;
+  width: 3px;
+  background: linear-gradient(to bottom, #3B38A0, #E1E5F0);
 }
 
 .myapps-timeline-item {
   position: relative;
-  padding-left: 50px;
-  margin-bottom: 25px;
+  padding-left: 60px;
+  margin-bottom: 30px;
 }
 
 .myapps-timeline-item:last-child {
@@ -529,39 +690,40 @@
 
 .myapps-timeline-marker {
   position: absolute;
-  left: 8px;
-  top: 5px;
-  width: 14px;
-  height: 14px;
+  left: 10px;
+  top: 8px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #E1E5F0;
-  border: 3px solid white;
-  box-shadow: 0 0 0 2px #E1E5F0;
+  border: 4px solid white;
+  box-shadow: 0 0 0 3px #E1E5F0;
+  z-index: 2;
 }
 
 .myapps-timeline-item.completed .myapps-timeline-marker {
   background: #27ae60;
-  box-shadow: 0 0 0 2px #27ae60;
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.3);
 }
 
 .myapps-timeline-item.current .myapps-timeline-marker {
-  background: #3498db;
-  box-shadow: 0 0 0 2px #3498db;
-  animation: pulse 2s infinite;
+  background: #3B38A0;
+  box-shadow: 0 0 0 3px rgba(59, 56, 160, 0.3);
+  animation: timelinePulse 2s infinite;
 }
 
 .myapps-timeline-item.pending .myapps-timeline-marker {
   background: #f39c12;
-  box-shadow: 0 0 0 2px #f39c12;
+  box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.3);
 }
 
-@keyframes pulse {
+@keyframes timelinePulse {
   0% {
     transform: scale(1);
     opacity: 1;
   }
   50% {
-    transform: scale(1.1);
+    transform: scale(1.2);
     opacity: 0.8;
   }
   100% {
@@ -570,20 +732,29 @@
   }
 }
 
+.myapps-timeline-content {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid #E1E5F0;
+  box-shadow: 0 2px 8px rgba(26, 42, 128, 0.05);
+}
+
 .myapps-timeline-content h6 {
   color: #1A2A80;
   font-size: 1rem;
   font-weight: 600;
-  margin: 0 0 5px 0;
+  margin: 0 0 6px 0;
 }
 
 .myapps-timeline-content p {
   color: #7A85C1;
   font-size: 0.9rem;
   margin: 0;
+  font-weight: 500;
 }
 
-/* Withdraw Modal Styles */
+/* ===== WITHDRAW MODAL STYLES - Updated ===== */
 .myapps-withdraw-modal-overlay {
   position: fixed;
   top: 0;
@@ -601,17 +772,17 @@
 
 .myapps-withdraw-modal {
   background: white;
-  border-radius: 16px;
+  border-radius: 20px;
   max-width: 500px;
   width: 100%;
-  box-shadow: 0 20px 60px rgba(26, 42, 128, 0.3);
+  box-shadow: 0 25px 60px rgba(26, 42, 128, 0.3);
   animation: myappsWithdrawSlideUp 0.3s ease-out;
 }
 
 @keyframes myappsWithdrawSlideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -623,8 +794,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 30px;
-  border-bottom: 1px solid #E1E5F0;
+  padding: 30px;
+  border-bottom: 2px solid #E1E5F0;
+  background: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%);
 }
 
 .myapps-withdraw-modal-header h3 {
@@ -643,15 +815,15 @@
   color: #4A5568;
   font-size: 1rem;
   line-height: 1.6;
-  margin: 0 0 20px 0;
+  margin: 0 0 25px 0;
   font-family: 'Poppins', sans-serif;
 }
 
 .myapps-withdraw-job-info {
-  background: #f8f9ff;
-  padding: 20px;
-  border-radius: 12px;
-  margin: 20px 0;
+  background: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%);
+  padding: 25px;
+  border-radius: 16px;
+  margin: 25px 0;
   border: 2px solid #E1E5F0;
 }
 
@@ -667,64 +839,101 @@
   color: #7A85C1;
   margin: 0;
   font-size: 1rem;
+  font-weight: 500;
 }
 
 .myapps-withdraw-warning {
-  color: #e74c3c !important;
-  font-weight: 600 !important;
-  font-size: 0.95rem !important;
+  color: #e74c3c;
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .myapps-withdraw-actions {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   margin-top: 30px;
 }
 
 .myapps-withdraw-cancel-btn {
-  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 12px 20px;
-  border: 1px solid #E1E5F0;
-  border-radius: 8px;
-  background: white;
-  color: #7A85C1;
+  border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  flex: 1;
+  background: transparent;
+  color: #3B38A0;
+  border: 2px solid #3B38A0;
 }
 
 .myapps-withdraw-cancel-btn:hover {
-  background: #f3f4f6;
-  color: #1A2A80;
-  border-color: #1A2A80;
+  background: #3B38A0;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(59, 56, 160, 0.2);
 }
 
 .myapps-withdraw-confirm-btn {
-  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  background: #e74c3c;
-  color: white;
+  border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-decoration: none;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  flex: 1;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
 }
 
 .myapps-withdraw-confirm-btn:hover {
-  background: #c0392b;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
 }
 
-/* Responsive Design */
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+  .myapps-container {
+    padding: 25px 30px;
+  }
+  
+  .myapps-header {
+    padding: 35px 30px;
+  }
+  
+  .myapps-hero h1 {
+    font-size: 2.2rem;
+  }
+  
+  .myapps-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
 @media (max-width: 768px) {
   .myapps-container {
-    padding: 15px;
+    padding: 20px 15px;
+    background: white;
   }
   
   .myapps-header {
@@ -741,11 +950,27 @@
   }
   
   .myapps-search-row {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .myapps-search-box {
+    max-width: none;
+  }
+  
+  .myapps-filter-box {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .myapps-status-filter {
+    flex: 1;
+    max-width: 200px;
   }
   
   .myapps-stats {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
   
   .myapps-card {
@@ -760,6 +985,7 @@
   
   .myapps-status-section {
     text-align: left;
+    width: 100%;
   }
   
   .myapps-company-info {
@@ -773,6 +999,7 @@
   
   .myapps-details {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
   
   .myapps-card-actions {
@@ -781,12 +1008,11 @@
   
   .myapps-modal {
     margin: 10px;
+    border-radius: 16px;
+    max-width: 95vw;
   }
   
-  .myapps-modal-header {
-    padding: 20px;
-  }
-  
+  .myapps-modal-header,
   .myapps-modal-body {
     padding: 20px;
   }
@@ -797,6 +1023,10 @@
 }
 
 @media (max-width: 480px) {
+  .myapps-container {
+    padding: 15px 10px;
+  }
+  
   .myapps-header {
     padding: 25px 20px;
   }
@@ -812,6 +1042,7 @@
   
   .myapps-stats {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
   
   .myapps-card {
@@ -819,9 +1050,15 @@
   }
   
   .myapps-company-logo {
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
+    width: 60px;
+    height: 60px;
+    font-size: 1.8rem;
+  }
+  
+  .myapps-company-logo.large {
+    width: 70px;
+    height: 70px;
+    font-size: 2rem;
   }
   
   .myapps-job-title {
@@ -829,16 +1066,36 @@
   }
   
   .myapps-timeline-item {
-    padding-left: 40px;
+    padding-left: 50px;
   }
   
   .myapps-timeline-marker {
-    left: 6px;
-    width: 12px;
-    height: 12px;
+    left: 8px;
+    width: 14px;
+    height: 14px;
   }
   
   .myapps-timeline-items::before {
-    left: 12px;
+    left: 15px;
+  }
+  
+  .myapps-timeline-content {
+    padding: 12px 16px;
+  }
+  
+  .myapps-company-details {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+    padding: 20px;
+  }
+  
+  .myapps-application-notes {
+    padding: 16px;
+  }
+  
+  .myapps-withdraw-modal-header,
+  .myapps-withdraw-modal-body {
+    padding: 20px;
   }
 }

@@ -1,10 +1,11 @@
-// Analytics.jsx - Enhanced Analytics Dashboard with Real Data
+// Analytics.jsx - UPDATED for Visual Consistency with JobSeeker Dashboard
 
 import { useState, useEffect } from 'react';
 import { TrendingUp, Users, Eye, Calendar, BarChart3, PieChart, Target, Award } from 'lucide-react';
 import './Analytics.css';
 
 function Analytics({ userInfo }) {
+  // Step 1: ALL STATE PRESERVED EXACTLY
   const [timeFilter, setTimeFilter] = useState('month');
   const [animatedValues, setAnimatedValues] = useState({
     totalViews: 0,
@@ -13,9 +14,8 @@ function Analytics({ userInfo }) {
     responseRate: 0
   });
 
-  // Real data calculated from existing mock data (as if from other components)
+  // Step 2: ALL DATA CALCULATION LOGIC PRESERVED EXACTLY
   const calculateRealData = () => {
-    // This would normally come from props or context, but using realistic mock data
     const jobsData = [
       { id: 1, title: 'Senior Frontend Developer', views: 156, applicants: 23, status: 'active', createdAt: '2024-02-15' },
       { id: 2, title: 'Marketing Manager', views: 89, applicants: 18, status: 'active', createdAt: '2024-02-10' },
@@ -71,9 +71,9 @@ function Analytics({ userInfo }) {
 
   const analyticsData = calculateRealData();
 
-  // Animated counter effect
+  // Step 3: ALL ANIMATION LOGIC PRESERVED EXACTLY
   useEffect(() => {
-    const duration = 1500; // 1.5 seconds
+    const duration = 1500;
     const steps = 60;
     const stepDuration = duration / steps;
 
@@ -98,7 +98,7 @@ function Analytics({ userInfo }) {
     return () => clearInterval(interval);
   }, [timeFilter]);
 
-  // Simple bar chart component
+  // Step 4: WEEKLY CHART COMPONENT PRESERVED EXACTLY
   const WeeklyChart = () => {
     const maxApplications = Math.max(...analyticsData.weeklyData.map(d => d.applications));
     
@@ -124,9 +124,10 @@ function Analytics({ userInfo }) {
     );
   };
 
+  // Step 5: MAIN RENDER - UPDATED HEADER ONLY, EVERYTHING ELSE PRESERVED
   return (
     <div className="analytics-container">
-      {/* Header */}
+      {/* ✅ UPDATED: Header with gradient background like other components */}
       <div className="analytics-header">
         <div className="analytics-header-content">
           <h1>Analytics & Insights</h1>
@@ -146,7 +147,7 @@ function Analytics({ userInfo }) {
         </div>
       </div>
 
-      {/* Key Metrics */}
+      {/* ✅ PRESERVED: Key Metrics exactly as before */}
       <div className="analytics-metrics">
         <div className="analytics-metric-card">
           <div className="analytics-metric-icon views">
@@ -195,7 +196,7 @@ function Analytics({ userInfo }) {
         </div>
       </div>
 
-      {/* Charts Section */}
+      {/* ✅ PRESERVED: Charts Section exactly as before */}
       <div className="analytics-charts">
         <div className="analytics-chart-card">
           <h3>Weekly Application Trends</h3>
@@ -233,7 +234,7 @@ function Analytics({ userInfo }) {
         </div>
       </div>
 
-      {/* Enhanced Insights */}
+      {/* ✅ PRESERVED: Enhanced Insights exactly as before */}
       <div className="analytics-insights">
         <div className="analytics-insight-card">
           <h4>

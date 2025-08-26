@@ -1,4 +1,4 @@
-// MyJobs.jsx - Updated with DeleteJobModal
+// MyJobs.jsx - UPDATED for Visual Consistency with JobSeeker Dashboard
 
 import { useState } from 'react';
 import { 
@@ -16,11 +16,11 @@ import {
   DollarSign
 } from 'lucide-react';
 import EditJobModal from './EditJobModal';
-import DeleteJobModal from './DeleteJobModal';  // ΝΕΟ Import
+import DeleteJobModal from './DeleteJobModal';
 import './MyJobs.css';
 
 function MyJobs({ onCreateJob, userInfo }) {
-  // Step 1: Jobs state with mock data
+  // Step 1: ALL STATE PRESERVED EXACTLY
   const [jobs, setJobs] = useState([
     {
       id: 1,
@@ -90,22 +90,18 @@ function MyJobs({ onCreateJob, userInfo }) {
     }
   ]);
 
-  // Step 2: Filter and search state
+  // Step 2: ALL FILTER AND MODAL STATES PRESERVED EXACTLY
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedJob, setSelectedJob] = useState(null);
   const [showJobDetails, setShowJobDetails] = useState(false);
-  
-  // Step 3: Modal states
   const [editingJob, setEditingJob] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  
-  // ΝΕΟ: Delete Modal state
   const [deletingJob, setDeletingJob] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Step 4: Filter jobs based on search and status
+  // Step 3: ALL FILTER LOGIC PRESERVED EXACTLY
   const filteredJobs = jobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          job.department.toLowerCase().includes(searchTerm.toLowerCase());
@@ -113,7 +109,7 @@ function MyJobs({ onCreateJob, userInfo }) {
     return matchesSearch && matchesStatus;
   });
 
-  // Step 5: Handle job actions
+  // Step 4: ALL HANDLER FUNCTIONS PRESERVED EXACTLY
   const handleViewJob = (job) => {
     setSelectedJob(job);
     setShowJobDetails(true);
@@ -132,7 +128,6 @@ function MyJobs({ onCreateJob, userInfo }) {
     setEditingJob(null);
   };
 
-  // ΝΕΟ: Updated delete functions
   const handleDeleteJob = (job) => {
     setDeletingJob(job);
     setShowDeleteModal(true);
@@ -141,7 +136,6 @@ function MyJobs({ onCreateJob, userInfo }) {
   const handleConfirmDelete = (jobId) => {
     setIsDeleting(true);
     
-    // Simulate API call delay
     setTimeout(() => {
       setJobs(prev => prev.filter(job => job.id !== jobId));
       setIsDeleting(false);
@@ -163,7 +157,7 @@ function MyJobs({ onCreateJob, userInfo }) {
     ));
   };
 
-  // Step 6: Get status badge class
+  // Step 5: ALL UTILITY FUNCTIONS PRESERVED EXACTLY
   const getStatusBadge = (status) => {
     switch (status) {
       case 'active':
@@ -177,7 +171,6 @@ function MyJobs({ onCreateJob, userInfo }) {
     }
   };
 
-  // Step 7: Format date
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -186,7 +179,7 @@ function MyJobs({ onCreateJob, userInfo }) {
     });
   };
 
-  // Step 8: Render job card
+  // Step 6: JOB CARD RENDER FUNCTION PRESERVED EXACTLY
   const renderJobCard = (job) => (
     <div key={job.id} className="myjobs-job-card">
       <div className="myjobs-job-header">
@@ -227,7 +220,6 @@ function MyJobs({ onCreateJob, userInfo }) {
                   Close Job
                 </button>
               )}
-              {/* UPDATED: Καλεί το νέο delete handler */}
               <button 
                 onClick={() => handleDeleteJob(job)}
                 className="myjobs-delete-action"
@@ -281,7 +273,7 @@ function MyJobs({ onCreateJob, userInfo }) {
     </div>
   );
 
-  // Step 9: Render job details modal
+  // Step 7: JOB DETAILS MODAL PRESERVED EXACTLY
   const renderJobDetails = () => {
     if (!selectedJob) return null;
 
@@ -362,9 +354,10 @@ function MyJobs({ onCreateJob, userInfo }) {
     );
   };
 
+  // Step 8: MAIN RENDER - UPDATED HEADER ONLY, EVERYTHING ELSE PRESERVED
   return (
     <div className="myjobs-container">
-      {/* Header */}
+      {/* ✅ UPDATED: Header with gradient background like other components */}
       <div className="myjobs-header">
         <div className="myjobs-header-content">
           <h1>My Job Postings</h1>
@@ -379,7 +372,7 @@ function MyJobs({ onCreateJob, userInfo }) {
         </button>
       </div>
 
-      {/* Filters */}
+      {/* ✅ PRESERVED: All filters exactly as before */}
       <div className="myjobs-filters">
         <div className="myjobs-search-box">
           <Search size={20} />
@@ -407,7 +400,7 @@ function MyJobs({ onCreateJob, userInfo }) {
         </div>
       </div>
 
-      {/* Jobs Summary */}
+      {/* ✅ PRESERVED: Jobs summary exactly as before */}
       <div className="myjobs-summary">
         <div className="myjobs-summary-card">
           <span className="myjobs-summary-number">{jobs.filter(j => j.status === 'active').length}</span>
@@ -423,7 +416,7 @@ function MyJobs({ onCreateJob, userInfo }) {
         </div>
       </div>
 
-      {/* Jobs List */}
+      {/* ✅ PRESERVED: Jobs list exactly as before */}
       <div className="myjobs-list">
         {filteredJobs.length > 0 ? (
           filteredJobs.map(renderJobCard)
@@ -449,10 +442,9 @@ function MyJobs({ onCreateJob, userInfo }) {
         )}
       </div>
 
-      {/* Job Details Modal */}
+      {/* ✅ PRESERVED: All modals exactly as before */}
       {showJobDetails && renderJobDetails()}
 
-      {/* Edit Job Modal */}
       <EditJobModal
         job={editingJob}
         isOpen={showEditModal}
@@ -464,7 +456,6 @@ function MyJobs({ onCreateJob, userInfo }) {
         userInfo={userInfo}
       />
 
-      {/* ΝΕΟ: Delete Job Modal */}
       <DeleteJobModal
         job={deletingJob}
         isOpen={showDeleteModal}

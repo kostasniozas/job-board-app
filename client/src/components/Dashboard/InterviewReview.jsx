@@ -1,4 +1,4 @@
-// InterviewReview.jsx - Interview Review Dashboard for Employers
+// InterviewReview.jsx - FIXED: Added missing isReadyForDecision function
 
 import { useState } from 'react';
 import { 
@@ -271,6 +271,11 @@ function InterviewReview({ userInfo }) {
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // ✅ FIXED: Added missing isReadyForDecision function
+  const isReadyForDecision = (interview) => {
+    return interview.status === 'reviewed' && !interview.decision;
+  };
+
   // Filter interviews
   const filteredInterviews = interviews.filter(interview => {
     const matchesStatus = statusFilter === 'all' || interview.status === statusFilter;
@@ -473,8 +478,7 @@ function InterviewReview({ userInfo }) {
                     className="interview-btn interview-btn-primary"
                   >
                     <Play size={16} />
-                    {interview.status === 'submitted' ? 'Start Review' : 
-                     interview.status === 'reviewed' ? 'View Review' : 'Review Interview'}
+                  Review Interview
                   </button>
 
                   {interview.status === 'reviewed' && !interview.decision && (

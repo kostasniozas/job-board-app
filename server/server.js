@@ -43,8 +43,8 @@ app.use(limiter);
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? 'https://your-frontend-url.netlify.app' 
-    : 'http://localhost:3000', // React dev server
-  credentials: true // Επιτρέπει cookies/sessions
+    : ['http://localhost:3000', 'http://localhost:5173'], // <-- ΠΡΟΣΘΕΣΕ ΚΑΙ ΤΟ 5173
+  credentials: true
 }));
 
 // 4. Body parsing - διαβάζει JSON data από requests
@@ -163,6 +163,8 @@ const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 // app.use('/api/auth', authRoutes);
 // app.use('/api/users', userRoutes);
+const jobRoutes = require('./routes/jobs');
+app.use('/api/jobs', jobRoutes);
 // app.use('/api/jobs', jobRoutes);
 // app.use('/api/applications', applicationRoutes);
 

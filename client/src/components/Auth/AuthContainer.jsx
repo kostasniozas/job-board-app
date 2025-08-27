@@ -10,41 +10,33 @@ import EmployerDashboard from '../Dashboard/EmployerDashboard';
 import JobSeekerDashboard from '../Dashboard/JobSeekerDashboard';
 
 function AuthContainer() {
-  // Step 1: Main application state
-  const [currentView, setCurrentView] = useState('login'); // 'login', 'register', 'profile-completion', 'job-seeker-profile', 'employer-profile', 'employer-dashboard', 'jobseeker-dashboard'
+  // Main application state
+  const [currentView, setCurrentView] = useState('login');
   const [userInfo, setUserInfo] = useState(null);
 
-  // Step 2: Handle login
+  // FIXED: Handle login with real backend data
   const handleLogin = (loginData) => {
     console.log('Login successful:', loginData);
     
-    // Mock: Determine if user is employer or job seeker
-    // In real app, this would come from the API response
-    const mockUserData = {
-      ...loginData,
-      firstName: 'John',
-      lastName: 'Doe',
-      userType: 'jobseeker' // Change to 'employer' to test employer flow
-    };
+    // Use real data from backend instead of mock data
+    setUserInfo(loginData);
     
-    setUserInfo(mockUserData);
-    
-    // Navigate to appropriate dashboard
-    if (mockUserData.userType === 'employer') {
+    // Navigate to appropriate dashboard based on real userType
+    if (loginData.userType === 'employer') {
       setCurrentView('employer-dashboard');
     } else {
       setCurrentView('jobseeker-dashboard');
     }
   };
 
-  // Step 3: Handle registration completion
+  // Handle registration completion
   const handleRegistrationComplete = (registrationData) => {
     console.log('Registration successful:', registrationData);
     setUserInfo(registrationData);
     setCurrentView('profile-completion');
   };
 
-  // Step 4: Handle profile completion choice
+  // Handle profile completion choice
   const handleCompleteProfile = () => {
     if (userInfo.userType === 'employer') {
       setCurrentView('employer-profile');
@@ -61,7 +53,7 @@ function AuthContainer() {
     }
   };
 
-  // Step 5: Handle profile form completion
+  // Handle profile form completion
   const handleProfileFormComplete = (profileData) => {
     console.log('Profile completed:', profileData);
     setUserInfo(profileData);
@@ -73,13 +65,13 @@ function AuthContainer() {
     }
   };
 
-  // Step 6: Handle logout
+  // Handle logout
   const handleLogout = () => {
     setUserInfo(null);
     setCurrentView('login');
   };
 
-  // Step 7: Navigation functions
+  // Navigation functions
   const goToLogin = () => {
     console.log('goToLogin called');
     setCurrentView('login');
@@ -92,7 +84,7 @@ function AuthContainer() {
   
   const goBackToProfileCompletion = () => setCurrentView('profile-completion');
 
-  // Step 8: Render current view
+  // Render current view
   const renderCurrentView = () => {
     switch (currentView) {
       case 'login':

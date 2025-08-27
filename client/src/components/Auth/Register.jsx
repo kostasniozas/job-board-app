@@ -1,25 +1,21 @@
-// Register.jsx - Register Component
+// Register.jsx - Register Component με Real API Integration
 
-// Step 1: Import React hooks
 import { useState } from 'react';
+import { authAPI } from '../../services/api';
 import './Register.css';
 
-// Step 2: Create the Register component
 function Register({ onRegistrationSuccess, onSwitchToLogin }) {
-  // Step 3: Create state for form data (simplified)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
-    userType: 'jobseeker'  // jobseeker or employer
+    userType: 'jobSeeker'  // Σωστό format για backend
   });
 
-  // Step 4: Create state for loading and errors
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Step 5: Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     
@@ -37,28 +33,23 @@ function Register({ onRegistrationSuccess, onSwitchToLogin }) {
     }
   };
 
-  // Step 6: Validate form data (simplified)
   const validateForm = () => {
     const newErrors = {};
 
-    // Check first name
     if (!formData.firstName.trim()) {
       newErrors.firstName = 'First name is required';
     }
 
-    // Check last name
     if (!formData.lastName.trim()) {
       newErrors.lastName = 'Last name is required';
     }
 
-    // Check email
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is not valid';
     }
 
-    // Check password
     if (!formData.password.trim()) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
@@ -69,43 +60,68 @@ function Register({ onRegistrationSuccess, onSwitchToLogin }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Step 7: Handle form submission
-  const handleSubmit = (e) => {
+  // ΑΛΛΑΓΗ ΕΔΩ: Real API call αντί για mock
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate form first
     if (!validateForm()) {
       return;
     }
 
     setIsLoading(true);
-    
-    // Simulate registration process
-    console.log('Registration attempt:', formData);
-    
-    // Reset loading after 2 seconds (simulation)
-    setTimeout(() => {
+    setErrors({}); // Clear any previous errors
+
+    try {
+      console.log('Registration attempt:', formData);
+      
+      // Καλούμε το πραγματικό backend API
+      const response = await authAPI.register({
+        email: formData.email,
+        password: formData.password,
+        userType: formData.userType,
+        firstName: formData.firstName,
+        lastName: formData.lastName
+      });
+
+      console.log('Registration successful:', response);
+      
+      // Call success callback
+      onRegistrationSuccess({
+        ...formData,
+        ...response.user
+      });
+
+    } catch (error) {
+      console.error('Registration failed:', error);
+      
+      // Handle errors from backend
+      if (error.message.includes('email')) {
+        setErrors({ email: 'Email already exists' });
+      } else {
+        setErrors({ general: error.message || 'Registration failed' });
+      }
+    } finally {
       setIsLoading(false);
-      // Call the success callback with form data
-      onRegistrationSuccess(formData);
-    }, 2000);
+    }
   };
 
-  // Step 8: Render the component
   return (
     <div className="register-container">
       <div className="register-card">
         
-        {/* Header */}
         <div className="register-header">
           <h1>Create Account</h1>
           <p>Join our job board platform</p>
         </div>
 
-        {/* Form */}
+        {errors.general && (
+          <div className="error-text" style={{ marginBottom: '20px', textAlign: 'center' }}>
+            {errors.general}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="register-form">
           
-          {/* User Type Selection */}
           <div className="form-group">
             <label>I am a</label>
             <div className="user-type-selector">
@@ -113,8 +129,8 @@ function Register({ onRegistrationSuccess, onSwitchToLogin }) {
                 <input
                   type="radio"
                   name="userType"
-                  value="jobseeker"
-                  checked={formData.userType === 'jobseeker'}
+                  value="jobSeeker"
+                  checked={formData.userType === 'jobSeeker'}
                   onChange={handleChange}
                 />
                 <span>Job Seeker</span>
@@ -132,7 +148,6 @@ function Register({ onRegistrationSuccess, onSwitchToLogin }) {
             </div>
           </div>
 
-          {/* Name Fields Row */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="firstName">First Name</label>
@@ -144,6 +159,7 @@ function Register({ onRegistrationSuccess, onSwitchToLogin }) {
                 onChange={handleChange}
                 className={`form-input ${errors.firstName ? 'error' : ''}`}
                 placeholder="First name"
+                disabled={isLoading}
               />
               {errors.firstName && (
                 <div className="error-text">{errors.firstName}</div>
@@ -160,6 +176,7 @@ function Register({ onRegistrationSuccess, onSwitchToLogin }) {
                 onChange={handleChange}
                 className={`form-input ${errors.lastName ? 'error' : ''}`}
                 placeholder="Last name"
+                disabled={isLoading}
               />
               {errors.lastName && (
                 <div className="error-text">{errors.lastName}</div>
@@ -167,7 +184,6 @@ function Register({ onRegistrationSuccess, onSwitchToLogin }) {
             </div>
           </div>
 
-          {/* Email Input */}
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -178,13 +194,13 @@ function Register({ onRegistrationSuccess, onSwitchToLogin }) {
               onChange={handleChange}
               className={`form-input ${errors.email ? 'error' : ''}`}
               placeholder="Enter your email"
+              disabled={isLoading}
             />
             {errors.email && (
               <div className="error-text">{errors.email}</div>
             )}
           </div>
 
-          {/* Password Input */}
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -195,13 +211,13 @@ function Register({ onRegistrationSuccess, onSwitchToLogin }) {
               onChange={handleChange}
               className={`form-input ${errors.password ? 'error' : ''}`}
               placeholder="Create a password (min 6 characters)"
+              disabled={isLoading}
             />
             {errors.password && (
               <div className="error-text">{errors.password}</div>
             )}
           </div>
 
-          {/* Submit Button */}
           <button 
             type="submit" 
             className="btn btn-primary register-btn"
@@ -211,7 +227,6 @@ function Register({ onRegistrationSuccess, onSwitchToLogin }) {
           </button>
         </form>
 
-        {/* Footer */}
         <div className="register-footer">
           <p>
             Already have an account?{' '}

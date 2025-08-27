@@ -1,6 +1,7 @@
-// Login.jsx - Login Component
+// Login.jsx - Login Component με Real API Integration και Fixed Error Handling
 
 import { useState } from 'react';
+import { authAPI } from '../../services/api';
 import './Login.css';
 
 const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
@@ -55,19 +56,35 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
     }
 
     setIsLoading(true);
+    setErrors({}); // Clear all previous errors
 
     try {
-      console.log('Login data:', formData);
+      console.log('Login attempt:', formData);
       
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call the real backend API
+      const response = await authAPI.login({
+        email: formData.email,
+        password: formData.password
+      });
+
+      console.log('Login successful:', response);
       
+      // Call success callback με τα user data από το backend
       if (onLoginSuccess) {
-        onLoginSuccess(formData);
+        onLoginSuccess({
+          ...response.user,
+          email: formData.email
+        });
       }
       
     } catch (error) {
       console.error('Login error:', error);
-      setErrors({ general: 'Login failed. Please try again.' });
+      
+      // ΔΙΟΡΘΩΣΗ: Απλοποιημένο error handling που θα εμφανίζει το message
+      setErrors({ 
+        general: error.message || 'Login failed. Please try again.' 
+      });
+      
     } finally {
       setIsLoading(false);
     }
@@ -83,22 +100,26 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
     <div className="login-container">
       <div className="login-card">
         
-        {/* Header */}
         <div className="login-header">
           <h1>Login</h1>
           <p>Sign in to your account</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="login-form">
-          {/* General Error */}
+          {/* ΔΙΟΡΘΩΣΗ: Σιγουρευόμαστε ότι το error εμφανίζεται */}
           {errors.general && (
-            <div className="error-message">
+            <div className="error-message" style={{ 
+              backgroundColor: '#fee2e2', 
+              color: '#dc2626', 
+              padding: '12px', 
+              borderRadius: '6px', 
+              marginBottom: '16px',
+              border: '1px solid #fecaca'
+            }}>
               {errors.general}
             </div>
           )}
 
-          {/* Email Field */}
           <div className="form-group">
             <label htmlFor="email" className="form-label">
               Email
@@ -120,7 +141,6 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
             )}
           </div>
 
-          {/* Password Field */}
           <div className="form-group">
             <label htmlFor="password" className="form-label">
               Password
@@ -142,7 +162,6 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
             )}
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="btn btn-primary login-button"
@@ -152,7 +171,6 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
           </button>
         </form>
 
-        {/* Footer - Switch to Register */}
         <div className="login-footer">
           <p>
             Don't have an account?

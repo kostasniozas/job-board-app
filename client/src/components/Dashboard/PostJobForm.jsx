@@ -1,8 +1,8 @@
-// PostJobForm.jsx - Post Job Form Component (Dashboard Compatible)
-
+// PostJobForm.jsx - Post Job Form Component (Dashboard Compatible) - UPDATED WITH BACKEND
 import { useState } from 'react';
 import { ArrowLeft, MapPin, Clock, Users, DollarSign } from 'lucide-react';
 import './PostJobForm.css';
+import { jobsAPI } from '../../services/api';
 
 function PostJobForm({ onBack, userInfo }) {
   // Step 1: Job posting state
@@ -38,6 +38,8 @@ function PostJobForm({ onBack, userInfo }) {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState('');
   const totalSteps = 3;
 
   // Step 2: Handle input changes
@@ -66,6 +68,10 @@ function PostJobForm({ onBack, userInfo }) {
         [name]: ''
       }));
     }
+
+    // Clear submit messages
+    setSubmitError('');
+    setSubmitSuccess('');
   };
 
   // Step 3: Validation
@@ -107,28 +113,66 @@ function PostJobForm({ onBack, userInfo }) {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  // Step 5: Submit job posting
-  const handleSubmit = (e) => {
+  // Step 5: Submit job posting - ΕΝΗΜΕΡΩΜΕΝΗ ΕΚΔΟΣΗ ΜΕ BACKEND
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Έλεγχος validation για το τελευταίο βήμα
     if (!validateStep(currentStep)) {
       return;
     }
 
     setIsLoading(true);
+    setSubmitError('');
+    setSubmitSuccess('');
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Job posting data:', {
-        ...jobData,
-        companyInfo: userInfo,
-        createdAt: new Date().toISOString()
-      });
-      
+    try {
+      // Προετοιμασία δεδομένων για το backend
+      const jobDataForAPI = {
+        title: jobData.title,
+        company: userInfo?.companyName || userInfo?.firstName + ' ' + userInfo?.lastName || 'Company Name',
+        location: jobData.location,
+        type: jobData.employmentType, // full-time, part-time, κλπ
+        workType: jobData.workType, // remote, office, hybrid
+        salary: jobData.salaryMin && jobData.salaryMax 
+          ? `€${jobData.salaryMin} - €${jobData.salaryMax}` 
+          : jobData.salaryMin 
+          ? `From €${jobData.salaryMin}` 
+          : 'Competitive',
+        description: jobData.description,
+        requirements: jobData.requirements,
+        responsibilities: jobData.responsibilities,
+        benefits: jobData.benefits.join(', '), // Array σε string
+        experienceLevel: jobData.experienceLevel,
+        skills: jobData.skills,
+        applicationDeadline: jobData.applicationDeadline,
+        startDate: jobData.startDate || null,
+        department: jobData.department
+      };
+
+      // Κλήση του backend API
+      console.log('Sending job data to backend:', jobDataForAPI);
+      const response = await jobsAPI.createJob(jobDataForAPI);
+
+      if (response.success) {
+        setSubmitSuccess('Job posted successfully!');
+        
+        // Επιτυχία - μετά από 2 δευτερόλεπτα πάμε πίσω στο dashboard
+        setTimeout(() => {
+          onBack(); // Επιστροφή στο dashboard
+        }, 2000);
+        
+        console.log('Job posted successfully:', response.job);
+      } else {
+        throw new Error(response.message || 'Failed to post job');
+      }
+
+    } catch (error) {
+      console.error('Error posting job:', error);
+      setSubmitError(error.message || 'Failed to post job. Please try again.');
+    } finally {
       setIsLoading(false);
-      alert('Job posted successfully!');
-      onBack(); // Go back to dashboard
-    }, 2000);
+    }
   };
 
   // Step 6: Render step content
@@ -411,6 +455,19 @@ function PostJobForm({ onBack, userInfo }) {
                 />
               </div>
             </div>
+
+            {/* Error/Success Messages */}
+            {submitError && (
+              <div className="postjob-error-message">
+                {submitError}
+              </div>
+            )}
+            
+            {submitSuccess && (
+              <div className="postjob-success-message">
+                {submitSuccess}
+              </div>
+            )}
           </div>
         );
 
@@ -425,7 +482,7 @@ function PostJobForm({ onBack, userInfo }) {
         
         {/* Header */}
         <div className="postjob-header">
-          <button onClick={onBack} className="postjob-back-btn">
+          <button onClick={onBack} className="postjob-back-btn" disabled={isLoading}>
             <ArrowLeft size={20} />
             Back to Dashboard
           </button>
@@ -459,6 +516,7 @@ function PostJobForm({ onBack, userInfo }) {
                 type="button" 
                 onClick={handlePrevious}
                 className="btn btn-outline postjob-nav-btn"
+                disabled={isLoading}
               >
                 Previous
               </button>
@@ -469,6 +527,7 @@ function PostJobForm({ onBack, userInfo }) {
                 type="button" 
                 onClick={handleNext}
                 className="btn btn-primary postjob-nav-btn"
+                disabled={isLoading}
               >
                 Next
               </button>

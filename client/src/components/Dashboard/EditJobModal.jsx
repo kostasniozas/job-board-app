@@ -1,17 +1,18 @@
-// EditJobModal.jsx - Edit Job Modal Component
-
+// EditJobModal.jsx - Edit Job Modal Component - BACKEND INTEGRATED with Salary Fix
 import { useState, useEffect } from 'react';
-import { X, Save, MapPin, DollarSign, Calendar, Users } from 'lucide-react';
+import { X, Save, MapPin, DollarSign, Calendar, Users, AlertCircle } from 'lucide-react';
+import { jobsAPI } from '../../services/api';
 import './EditJobModal.css';
 
 function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
   // Initialize form data with job data
   const [formData, setFormData] = useState({
     title: '',
+    company: '',
     department: '',
     location: '',
     workType: '',
-    employmentType: '',
+    type: '', // employment type
     description: '',
     requirements: '',
     responsibilities: '',
@@ -28,30 +29,72 @@ function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
+  const [saveError, setSaveError] = useState('');
+  const [saveSuccess, setSaveSuccess] = useState('');
 
-  // Populate form when job data changes
+  // Populate form when job data changes - WITH SALARY FIX
   useEffect(() => {
     if (job && isOpen) {
+      // Parse salary string back to min/max - WITH VALIDATION
+      let salaryMin = '';
+      let salaryMax = '';
+      if (job.salary && job.salary !== 'Competitive') {
+        const salaryMatch = job.salary.match(/€(\d+)\s*-\s*€(\d+)/);
+        if (salaryMatch) {
+          // Validation για λογικούς αριθμούς
+          const min = parseInt(salaryMatch[1]);
+          const max = parseInt(salaryMatch[2]);
+          if (min <= 500000 && max <= 500000 && min > 0 && max > 0 && min <= max) {
+            salaryMin = salaryMatch[1];
+            salaryMax = salaryMatch[2];
+          }
+        } else if (job.salary.includes('From €')) {
+          const fromSalary = job.salary.replace('From €', '').replace(',', '');
+          const salaryNum = parseInt(fromSalary);
+          if (salaryNum <= 500000 && salaryNum > 0) {
+            salaryMin = fromSalary;
+          }
+        }
+      }
+
+      // Parse benefits string back to array
+      let benefits = [];
+      if (job.benefits && typeof job.benefits === 'string') {
+        benefits = job.benefits.split(', ').filter(b => b.trim());
+      } else if (Array.isArray(job.benefits)) {
+        benefits = job.benefits;
+      }
+
+      // Format dates for input fields
+      const formatDateForInput = (dateStr) => {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        return date.toISOString().split('T')[0];
+      };
+
       setFormData({
         title: job.title || '',
+        company: job.company || '',
         department: job.department || '',
         location: job.location || '',
         workType: job.workType || '',
-        employmentType: job.employmentType || '',
+        type: job.type || '', // employment type
         description: job.description || '',
         requirements: job.requirements || '',
         responsibilities: job.responsibilities || '',
-        salaryMin: job.salaryMin || '',
-        salaryMax: job.salaryMax || '',
+        salaryMin: salaryMin,
+        salaryMax: salaryMax,
         experienceLevel: job.experienceLevel || '',
         skills: job.skills || '',
-        benefits: job.benefits || [],
-        applicationDeadline: job.deadline || '',
-        startDate: job.startDate || '',
+        benefits: benefits,
+        applicationDeadline: formatDateForInput(job.applicationDeadline),
+        startDate: formatDateForInput(job.startDate),
         status: job.status || 'active'
       });
       setActiveTab('basic');
       setErrors({});
+      setSaveError('');
+      setSaveSuccess('');
     }
   }, [job, isOpen]);
 
@@ -80,6 +123,10 @@ function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
         [name]: ''
       }));
     }
+
+    // Clear messages
+    setSaveError('');
+    setSaveSuccess('');
   };
 
   // Validation
@@ -89,7 +136,7 @@ function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
     if (!formData.title.trim()) newErrors.title = 'Job title is required';
     if (!formData.location.trim()) newErrors.location = 'Location is required';
     if (!formData.workType) newErrors.workType = 'Work type is required';
-    if (!formData.employmentType) newErrors.employmentType = 'Employment type is required';
+    if (!formData.type) newErrors.type = 'Employment type is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     
     setErrors(newErrors);
@@ -97,26 +144,67 @@ function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) return;
     
     setIsLoading(true);
+    setSaveError('');
+    setSaveSuccess('');
     
-    // Simulate API call
-    setTimeout(() => {
-      const updatedJob = {
-        ...job,
-        ...formData,
-        deadline: formData.applicationDeadline,
-        updatedAt: new Date().toISOString()
+    try {
+      // Prepare data for API - same format as PostJobForm
+      const updateData = {
+        title: formData.title,
+        company: formData.company,
+        department: formData.department,
+        location: formData.location,
+        workType: formData.workType,
+        type: formData.type,
+        description: formData.description,
+        requirements: formData.requirements,
+        responsibilities: formData.responsibilities,
+        salary: formData.salaryMin && formData.salaryMax 
+          ? `€${formData.salaryMin} - €${formData.salaryMax}` 
+          : formData.salaryMin 
+          ? `From €${formData.salaryMin}` 
+          : 'Competitive',
+        benefits: formData.benefits.join(', '),
+        experienceLevel: formData.experienceLevel,
+        skills: formData.skills,
+        applicationDeadline: formData.applicationDeadline,
+        startDate: formData.startDate,
+        status: formData.status
       };
-      
-      onSave(updatedJob);
+
+      console.log('Updating job with data:', updateData);
+
+      // Call the API
+      const response = await jobsAPI.updateJob(job._id || job.id, updateData);
+
+      if (response.success) {
+        setSaveSuccess('Job updated successfully!');
+        
+        // Update the parent component
+        onSave(response.job);
+        
+        // Close modal after delay
+        setTimeout(() => {
+          onClose();
+        }, 1500);
+        
+        console.log('Job updated successfully:', response.job);
+      } else {
+        throw new Error(response.message || 'Failed to update job');
+      }
+
+    } catch (error) {
+      console.error('Error updating job:', error);
+      setSaveError(error.message || 'Failed to update job. Please try again.');
+    } finally {
       setIsLoading(false);
-      onClose();
-    }, 1500);
+    }
   };
 
   // Handle modal close
@@ -148,6 +236,21 @@ function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
               </div>
 
               <div className="editjob-form-group">
+                <label htmlFor="company">Company Name</label>
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  value={formData.company}
+                  onChange={handleChange}
+                  className="editjob-form-input"
+                  placeholder="e.g. Tech Solutions"
+                />
+              </div>
+            </div>
+
+            <div className="editjob-form-row">
+              <div className="editjob-form-group">
                 <label htmlFor="department">Department</label>
                 <input
                   type="text"
@@ -159,9 +262,7 @@ function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
                   placeholder="e.g. Engineering"
                 />
               </div>
-            </div>
 
-            <div className="editjob-form-row">
               <div className="editjob-form-group">
                 <label htmlFor="location">Location *</label>
                 <input
@@ -175,7 +276,9 @@ function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
                 />
                 {errors.location && <div className="editjob-error-text">{errors.location}</div>}
               </div>
+            </div>
 
+            <div className="editjob-form-row">
               <div className="editjob-form-group">
                 <label htmlFor="workType">Work Type *</label>
                 <select
@@ -192,17 +295,15 @@ function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
                 </select>
                 {errors.workType && <div className="editjob-error-text">{errors.workType}</div>}
               </div>
-            </div>
 
-            <div className="editjob-form-row">
               <div className="editjob-form-group">
-                <label htmlFor="employmentType">Employment Type *</label>
+                <label htmlFor="type">Employment Type *</label>
                 <select
-                  id="employmentType"
-                  name="employmentType"
-                  value={formData.employmentType}
+                  id="type"
+                  name="type"
+                  value={formData.type}
                   onChange={handleChange}
-                  className={`editjob-form-input ${errors.employmentType ? 'error' : ''}`}
+                  className={`editjob-form-input ${errors.type ? 'error' : ''}`}
                 >
                   <option value="">Select employment type</option>
                   <option value="full-time">Full-time</option>
@@ -211,23 +312,23 @@ function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
                   <option value="freelance">Freelance</option>
                   <option value="internship">Internship</option>
                 </select>
-                {errors.employmentType && <div className="editjob-error-text">{errors.employmentType}</div>}
+                {errors.type && <div className="editjob-error-text">{errors.type}</div>}
               </div>
+            </div>
 
-              <div className="editjob-form-group">
-                <label htmlFor="status">Job Status</label>
-                <select
-                  id="status"
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="editjob-form-input"
-                >
-                  <option value="active">Active</option>
-                  <option value="closed">Closed</option>
-                  <option value="draft">Draft</option>
-                </select>
-              </div>
+            <div className="editjob-form-group">
+              <label htmlFor="status">Job Status</label>
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="editjob-form-input"
+              >
+                <option value="active">Active</option>
+                <option value="closed">Closed</option>
+                <option value="draft">Draft</option>
+              </select>
             </div>
           </div>
         );
@@ -391,6 +492,20 @@ function EditJobModal({ job, isOpen, onClose, onSave, userInfo }) {
                 />
               </div>
             </div>
+
+            {/* Success/Error Messages */}
+            {saveError && (
+              <div className="editjob-error-message">
+                <AlertCircle size={16} />
+                {saveError}
+              </div>
+            )}
+            
+            {saveSuccess && (
+              <div className="editjob-success-message">
+                {saveSuccess}
+              </div>
+            )}
           </div>
         );
 

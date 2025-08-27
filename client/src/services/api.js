@@ -69,5 +69,30 @@ export const jobsAPI = {
       method: 'POST',
       body: JSON.stringify(jobData),
     });
+  },
+
+  // Αγγελίες του συνδεδεμένου εργοδότη
+  getMyJobs: async () => {
+    return apiCall('/jobs/my-jobs');
+  },
+
+  // Ενημέρωση αγγελίας
+  updateJob: async (jobId, jobData) => {
+    return apiCall(`/jobs/${jobId}`, {
+      method: 'PUT',
+      body: JSON.stringify(jobData),
+    });
+  },
+
+  // Διαγραφή αγγελίας
+  deleteJob: async (jobId) => {
+    return apiCall(`/jobs/${jobId}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Λεπτομέρειες συγκεκριμένης αγγελίας
+  getJobById: async (jobId) => {
+    return apiCall(`/jobs/${jobId}`);
   }
 };

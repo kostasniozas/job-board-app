@@ -578,3 +578,23 @@ textarea.postjob-form-input {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+/* Success and Error Messages */
+.postjob-error-message {
+  background-color: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #fcc;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.postjob-success-message {
+  background-color: #efe;
+  color: #363;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #cfc;
+  margin-bottom: 15px;
+  font-size: 14px;
+}

@@ -396,3 +396,26 @@ textarea.editjob-form-input {
   outline: 2px solid var(--medium-blue);
   outline-offset: 2px;
 }
+/* Success and Error Messages */
+.editjob-error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #fcc;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.editjob-success-message {
+  background-color: #efe;
+  color: #363;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #cfc;
+  margin-top: 15px;
+  font-size: 14px;
+}

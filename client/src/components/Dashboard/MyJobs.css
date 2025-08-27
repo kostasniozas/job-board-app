@@ -933,3 +933,118 @@
     min-width: 180px;
   }
 }
+/* Loading and Error States */
+.myjobs-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.myjobs-loading .spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.myjobs-error-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #fee;
+  color: #c33;
+  padding: 15px 20px;
+  border-radius: 8px;
+  border: 1px solid #fcc;
+  margin: 20px 0;
+}
+
+.myjobs-retry-btn {
+  background: none;
+  border: none;
+  color: #c33;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+}
+
+.myjobs-header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+/* Additional CSS for Enhanced View Details Modal */
+.myjobs-detail-text {
+  line-height: 1.6;
+  color: #555;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.myjobs-detail-text p {
+  margin: 0 0 10px 0;
+  line-height: 1.6;
+}
+
+.myjobs-skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.myjobs-skill-tag {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid rgba(25, 118, 210, 0.3);
+  transition: all 0.2s ease;
+}
+
+.myjobs-skill-tag:hover {
+  background-color: #bbdefb;
+  transform: translateY(-1px);
+}
+
+.myjobs-benefits-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.myjobs-benefit-item {
+  background-color: #f8f9fa;
+  border: 1px solid #e1e5f0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #4A5568;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.myjobs-benefit-item:hover {
+  background-color: #e3f2fd;
+  border-color: #3B38A0;
+  color: #1A2A80;
+}
+
+/* Enhanced modal sections spacing */
+.myjobs-detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.myjobs-detail-section .myjobs-detail-grid div:last-child {
+  border-bottom: none;
+}

@@ -1,6 +1,5 @@
-// MyJobs.jsx - UPDATED for Visual Consistency with JobSeeker Dashboard
-
-import { useState } from 'react';
+// MyJobs.jsx - COMPLETE FINAL VERSION with Backend Integration and Salary Fix
+import { useState, useEffect } from 'react';
 import { 
   Plus, 
   Search, 
@@ -13,84 +12,24 @@ import {
   Calendar,
   MapPin,
   Clock,
-  DollarSign
+  DollarSign,
+  RefreshCw,
+  AlertCircle,
+  Building,
+  Briefcase
 } from 'lucide-react';
+import { jobsAPI } from '../../services/api';
 import EditJobModal from './EditJobModal';
 import DeleteJobModal from './DeleteJobModal';
 import './MyJobs.css';
 
 function MyJobs({ onCreateJob, userInfo }) {
-  // Step 1: ALL STATE PRESERVED EXACTLY
-  const [jobs, setJobs] = useState([
-    {
-      id: 1,
-      title: 'Senior Frontend Developer',
-      department: 'Engineering',
-      location: 'Athens, Greece',
-      workType: 'hybrid',
-      employmentType: 'full-time',
-      status: 'active',
-      applicants: 23,
-      views: 156,
-      salary: '€45,000 - €60,000',
-      salaryMin: '45000',
-      salaryMax: '60000',
-      createdAt: '2024-02-15',
-      deadline: '2024-03-15',
-      description: 'We are looking for an experienced Frontend Developer to join our team and help us build amazing user interfaces.',
-      requirements: 'Bachelor\'s degree in Computer Science or related field\n3+ years of experience with React\nStrong JavaScript and TypeScript skills\nExperience with modern CSS frameworks',
-      responsibilities: 'Develop new user-facing features\nBuild reusable components and front-end libraries\nOptimize applications for maximum speed and scalability\nCollaborate with design and backend teams',
-      skills: 'React, JavaScript, TypeScript, CSS, HTML, Git',
-      benefits: ['Health Insurance', 'Remote Work', 'Flexible Hours', 'Professional Development'],
-      experienceLevel: 'senior'
-    },
-    {
-      id: 2,
-      title: 'Marketing Manager',
-      department: 'Marketing',
-      location: 'Remote',
-      workType: 'remote',
-      employmentType: 'full-time',
-      status: 'active',
-      applicants: 18,
-      views: 89,
-      salary: '€35,000 - €50,000',
-      salaryMin: '35000',
-      salaryMax: '50000',
-      createdAt: '2024-02-10',
-      deadline: '2024-03-10',
-      description: 'Join our marketing team and help us grow our brand presence across multiple channels.',
-      requirements: 'Bachelor\'s degree in Marketing or Business\n5+ years of marketing experience\nStrong analytical and communication skills\nExperience with digital marketing platforms',
-      responsibilities: 'Develop and execute marketing strategies\nManage social media campaigns\nAnalyze market trends and customer behavior\nCollaborate with sales and product teams',
-      skills: 'Digital Marketing, SEO, Social Media, Analytics, Content Creation',
-      benefits: ['Health Insurance', 'Paid Time Off', 'Remote Work', 'Free Meals'],
-      experienceLevel: 'mid'
-    },
-    {
-      id: 3,
-      title: 'UX Designer',
-      department: 'Design',
-      location: 'Thessaloniki, Greece',
-      workType: 'office',
-      employmentType: 'contract',
-      status: 'closed',
-      applicants: 31,
-      views: 203,
-      salary: '€30,000 - €40,000',
-      salaryMin: '30000',
-      salaryMax: '40000',
-      createdAt: '2024-01-20',
-      deadline: '2024-02-20',
-      description: 'We need a creative UX Designer to improve our user experience and design intuitive interfaces.',
-      requirements: 'Bachelor\'s degree in Design or related field\n3+ years of UX design experience\nProficiency in design tools (Figma, Sketch)\nStrong portfolio demonstrating UX skills',
-      responsibilities: 'Conduct user research and usability testing\nCreate wireframes and prototypes\nDesign user interfaces and experiences\nCollaborate with developers and product managers',
-      skills: 'Figma, Sketch, User Research, Prototyping, UI Design',
-      benefits: ['Health Insurance', 'Professional Development', 'Gym Membership'],
-      experienceLevel: 'mid'
-    }
-  ]);
-
-  // Step 2: ALL FILTER AND MODAL STATES PRESERVED EXACTLY
+  // Step 1: STATE για jobs από backend
+  const [jobs, setJobs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  
+  // Step 2: ΥΠΑΡΧΟΝΤΑ STATES διατηρημένα
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedJob, setSelectedJob] = useState(null);
@@ -101,15 +40,50 @@ function MyJobs({ onCreateJob, userInfo }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Step 3: ALL FILTER LOGIC PRESERVED EXACTLY
+  // Step 3: ΝΕΕΣ ΣΥΝΑΡΤΗΣΕΙΣ για backend integration
+  const fetchMyJobs = async () => {
+    try {
+      setIsLoading(true);
+      setError('');
+      console.log('Fetching jobs from backend...');
+      
+      const response = await jobsAPI.getMyJobs();
+      console.log('Jobs response:', response);
+      
+      if (response.success) {
+        setJobs(response.jobs || []);
+      } else {
+        throw new Error(response.message || 'Failed to fetch jobs');
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      setError(error.message || 'Failed to load jobs');
+      setJobs([]); // Fallback σε άδειο array
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Step 4: Load jobs όταν φορτώνει το component
+  useEffect(() => {
+    fetchMyJobs();
+  }, []);
+
+  // Step 5: Refresh function
+  const handleRefresh = () => {
+    fetchMyJobs();
+  };
+
+  // Step 6: ΔΙΑΤΗΡΗΣΗ filter logic
   const filteredJobs = jobs.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.department.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = job.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         job.department?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         job.company?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || job.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  // Step 4: ALL HANDLER FUNCTIONS PRESERVED EXACTLY
+  // Step 7: ΔΙΑΤΗΡΗΣΗ όλων των handler functions
   const handleViewJob = (job) => {
     setSelectedJob(job);
     setShowJobDetails(true);
@@ -122,10 +96,12 @@ function MyJobs({ onCreateJob, userInfo }) {
 
   const handleSaveEditedJob = (updatedJob) => {
     setJobs(prev => prev.map(job => 
-      job.id === updatedJob.id ? updatedJob : job
+      job._id === updatedJob._id ? updatedJob : job
     ));
     setShowEditModal(false);
     setEditingJob(null);
+    // Refresh jobs to get latest data
+    fetchMyJobs();
   };
 
   const handleDeleteJob = (job) => {
@@ -133,15 +109,23 @@ function MyJobs({ onCreateJob, userInfo }) {
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = (jobId) => {
+  const handleConfirmDelete = async (jobId) => {
     setIsDeleting(true);
     
-    setTimeout(() => {
-      setJobs(prev => prev.filter(job => job.id !== jobId));
-      setIsDeleting(false);
+    try {
+      // Call the delete API
+      await jobsAPI.deleteJob(jobId);
+      
+      // Remove from local state
+      setJobs(prev => prev.filter(job => job._id !== jobId));
       setShowDeleteModal(false);
       setDeletingJob(null);
-    }, 1500);
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      // You might want to show an error message here
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const handleCloseDeleteModal = () => {
@@ -153,11 +137,11 @@ function MyJobs({ onCreateJob, userInfo }) {
 
   const handleCloseJob = (jobId) => {
     setJobs(prev => prev.map(job => 
-      job.id === jobId ? { ...job, status: 'closed' } : job
+      job._id === jobId ? { ...job, status: 'closed' } : job
     ));
   };
 
-  // Step 5: ALL UTILITY FUNCTIONS PRESERVED EXACTLY
+  // Step 8: ΔΙΑΤΗΡΗΣΗ utility functions
   const getStatusBadge = (status) => {
     switch (status) {
       case 'active':
@@ -172,34 +156,36 @@ function MyJobs({ onCreateJob, userInfo }) {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    if (!dateString) return 'No date';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
   };
 
-  // Step 6: JOB CARD RENDER FUNCTION PRESERVED EXACTLY
+  // Step 9: ΕΝΗΜΕΡΩΜΕΝΗ Job card render function
   const renderJobCard = (job) => (
-    <div key={job.id} className="myjobs-job-card">
+    <div key={job._id || job.id} className="myjobs-job-card">
       <div className="myjobs-job-header">
         <div className="myjobs-job-title-section">
           <h3 className="myjobs-job-title">{job.title}</h3>
           <div className="myjobs-job-meta">
-            <span className="myjobs-department">{job.department}</span>
+            <span className="myjobs-department">{job.company}</span>
             <span className="myjobs-separator">•</span>
             <span className="myjobs-location">
               <MapPin size={14} />
               {job.location}
             </span>
             <span className="myjobs-separator">•</span>
-            <span className="myjobs-work-type">{job.workType}</span>
+            <span className="myjobs-work-type">{job.workType || job.type}</span>
           </div>
         </div>
         
         <div className="myjobs-job-actions">
-          <span className={`myjobs-status-badge ${getStatusBadge(job.status)}`}>
-            {job.status}
+          <span className={`myjobs-status-badge ${getStatusBadge(job.status || 'active')}`}>
+            {job.status || 'active'}
           </span>
           <div className="myjobs-actions-dropdown">
             <button className="myjobs-more-btn">
@@ -214,8 +200,8 @@ function MyJobs({ onCreateJob, userInfo }) {
                 <Edit3 size={16} />
                 Edit Job
               </button>
-              {job.status === 'active' && (
-                <button onClick={() => handleCloseJob(job.id)}>
+              {(!job.status || job.status === 'active') && (
+                <button onClick={() => handleCloseJob(job._id || job.id)}>
                   <Clock size={16} />
                   Close Job
                 </button>
@@ -235,32 +221,32 @@ function MyJobs({ onCreateJob, userInfo }) {
       <div className="myjobs-job-stats">
         <div className="myjobs-stat">
           <Users size={16} />
-          <span>{job.applicants} applicants</span>
+          <span>{job.applicants || 0} applicants</span>
         </div>
         <div className="myjobs-stat">
           <Eye size={16} />
-          <span>{job.views} views</span>
+          <span>{job.views || 0} views</span>
         </div>
         <div className="myjobs-stat">
           <DollarSign size={16} />
-          <span>{job.salary}</span>
+          <span>{job.salary || 'Competitive'}</span>
         </div>
         <div className="myjobs-stat">
           <Calendar size={16} />
-          <span>Deadline: {formatDate(job.deadline)}</span>
+          <span>Posted: {formatDate(job.createdAt || job.datePosted)}</span>
         </div>
       </div>
 
       <div className="myjobs-job-footer">
         <span className="myjobs-created-date">
-          Posted on {formatDate(job.createdAt)}
+          Posted on {formatDate(job.createdAt || job.datePosted)}
         </span>
         <div className="myjobs-quick-actions">
           <button 
             onClick={() => handleViewJob(job)}
             className="myjobs-btn myjobs-btn-outline"
           >
-            View Applications
+            View Details
           </button>
           <button 
             onClick={() => handleEditJob(job)}
@@ -273,7 +259,7 @@ function MyJobs({ onCreateJob, userInfo }) {
     </div>
   );
 
-  // Step 7: JOB DETAILS MODAL PRESERVED EXACTLY
+  // Step 10: ΔΙΟΡΘΩΜΕΝΟ Job details modal με salary fix
   const renderJobDetails = () => {
     if (!selectedJob) return null;
 
@@ -292,43 +278,136 @@ function MyJobs({ onCreateJob, userInfo }) {
           
           <div className="myjobs-modal-content">
             <div className="myjobs-job-details">
+              {/* Basic Job Information */}
               <div className="myjobs-detail-section">
                 <h4>Job Information</h4>
                 <div className="myjobs-detail-grid">
                   <div>
-                    <strong>Department:</strong> {selectedJob.department}
+                    <strong>Company:</strong> {selectedJob.company || 'N/A'}
                   </div>
                   <div>
                     <strong>Location:</strong> {selectedJob.location}
                   </div>
                   <div>
-                    <strong>Work Type:</strong> {selectedJob.workType}
+                    <strong>Work Type:</strong> {selectedJob.workType || 'N/A'}
                   </div>
                   <div>
-                    <strong>Employment:</strong> {selectedJob.employmentType}
+                    <strong>Employment Type:</strong> {selectedJob.type || 'N/A'}
+                  </div>
+                  <div>
+                    <strong>Experience Level:</strong> {selectedJob.experienceLevel || 'N/A'}
+                  </div>
+                  <div>
+                    <strong>Department:</strong> {selectedJob.department || 'N/A'}
                   </div>
                 </div>
               </div>
               
+              {/* Job Description */}
+              {selectedJob.description && (
+                <div className="myjobs-detail-section">
+                  <h4>Description</h4>
+                  <p className="myjobs-detail-text">{selectedJob.description}</p>
+                </div>
+              )}
+              
+              {/* Requirements */}
+              {selectedJob.requirements && (
+                <div className="myjobs-detail-section">
+                  <h4>Requirements</h4>
+                  <div className="myjobs-detail-text">
+                    {selectedJob.requirements.split('\n').map((req, index) => (
+                      <p key={index}>{req}</p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Responsibilities */}
+              {selectedJob.responsibilities && (
+                <div className="myjobs-detail-section">
+                  <h4>Key Responsibilities</h4>
+                  <div className="myjobs-detail-text">
+                    {selectedJob.responsibilities.split('\n').map((resp, index) => (
+                      <p key={index}>{resp}</p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Skills */}
+              {selectedJob.skills && (
+                <div className="myjobs-detail-section">
+                  <h4>Required Skills</h4>
+                  <div className="myjobs-skills-tags">
+                    {selectedJob.skills.split(',').map((skill, index) => (
+                      <span key={index} className="myjobs-skill-tag">
+                        {skill.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Benefits */}
+              {selectedJob.benefits && (
+                <div className="myjobs-detail-section">
+                  <h4>Benefits & Perks</h4>
+                  <div className="myjobs-benefits-list">
+                    {(typeof selectedJob.benefits === 'string' 
+                      ? selectedJob.benefits.split(', ') 
+                      : selectedJob.benefits || []
+                    ).map((benefit, index) => (
+                      <span key={index} className="myjobs-benefit-item">
+                        {benefit}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Dates */}
               <div className="myjobs-detail-section">
-                <h4>Description</h4>
-                <p>{selectedJob.description}</p>
+                <h4>Important Dates</h4>
+                <div className="myjobs-detail-grid">
+                  <div>
+                    <strong>Posted:</strong> {formatDate(selectedJob.createdAt)}
+                  </div>
+                  <div>
+                    <strong>Updated:</strong> {formatDate(selectedJob.updatedAt)}
+                  </div>
+                  {selectedJob.applicationDeadline && (
+                    <div>
+                      <strong>Application Deadline:</strong> {formatDate(selectedJob.applicationDeadline)}
+                    </div>
+                  )}
+                  {selectedJob.startDate && (
+                    <div>
+                      <strong>Expected Start Date:</strong> {formatDate(selectedJob.startDate)}
+                    </div>
+                  )}
+                </div>
               </div>
               
+              {/* Statistics - FIXED SALARY DISPLAY */}
               <div className="myjobs-detail-section">
                 <h4>Statistics</h4>
                 <div className="myjobs-stats-grid">
                   <div className="myjobs-stat-item">
-                    <span className="myjobs-stat-number">{selectedJob.applicants}</span>
+                    <span className="myjobs-stat-number">{selectedJob.applicants || 0}</span>
                     <span className="myjobs-stat-label">Applicants</span>
                   </div>
                   <div className="myjobs-stat-item">
-                    <span className="myjobs-stat-number">{selectedJob.views}</span>
+                    <span className="myjobs-stat-number">{selectedJob.views || 0}</span>
                     <span className="myjobs-stat-label">Views</span>
                   </div>
                   <div className="myjobs-stat-item">
-                    <span className="myjobs-stat-number">{selectedJob.salary}</span>
-                    <span className="myjobs-stat-label">Salary Range</span>
+                    <span className="myjobs-stat-number" style={{fontSize: '1rem', wordBreak: 'break-word', lineHeight: '1.3'}}>{selectedJob.salary || 'Competitive'}</span>
+                    <span className="myjobs-stat-label">Salary</span>
+                  </div>
+                  <div className="myjobs-stat-item">
+                    <span className="myjobs-stat-number" style={{fontSize: '1rem', textTransform: 'capitalize'}}>{selectedJob.status || 'active'}</span>
+                    <span className="myjobs-stat-label">Status</span>
                   </div>
                 </div>
               </div>
@@ -340,6 +419,7 @@ function MyJobs({ onCreateJob, userInfo }) {
               onClick={() => handleEditJob(selectedJob)}
               className="myjobs-btn myjobs-btn-primary"
             >
+              <Edit3 size={16} />
               Edit Job
             </button>
             <button 
@@ -354,95 +434,129 @@ function MyJobs({ onCreateJob, userInfo }) {
     );
   };
 
-  // Step 8: MAIN RENDER - UPDATED HEADER ONLY, EVERYTHING ELSE PRESERVED
+  // Step 11: ΕΝΗΜΕΡΩΜΕΝΟ main render με loading/error states
   return (
     <div className="myjobs-container">
-      {/* ✅ UPDATED: Header with gradient background like other components */}
+      {/* Header */}
       <div className="myjobs-header">
         <div className="myjobs-header-content">
           <h1>My Job Postings</h1>
           <p>Manage your job postings and track applications</p>
         </div>
-        <button 
-          onClick={onCreateJob}
-          className="myjobs-btn myjobs-btn-primary myjobs-create-btn"
-        >
-          <Plus size={20} />
-          Post New Job
-        </button>
-      </div>
-
-      {/* ✅ PRESERVED: All filters exactly as before */}
-      <div className="myjobs-filters">
-        <div className="myjobs-search-box">
-          <Search size={20} />
-          <input
-            type="text"
-            placeholder="Search jobs by title or department..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="myjobs-search-input"
-          />
-        </div>
-        
-        <div className="myjobs-filter-group">
-          <Filter size={20} />
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="myjobs-filter-select"
+        <div className="myjobs-header-actions">
+          <button 
+            onClick={handleRefresh}
+            className="myjobs-btn myjobs-btn-outline"
+            disabled={isLoading}
           >
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="closed">Closed</option>
-            <option value="draft">Draft</option>
-          </select>
+            <RefreshCw size={20} className={isLoading ? 'spinning' : ''} />
+            Refresh
+          </button>
+          <button 
+            onClick={onCreateJob}
+            className="myjobs-btn myjobs-btn-primary myjobs-create-btn"
+          >
+            <Plus size={20} />
+            Post New Job
+          </button>
         </div>
       </div>
 
-      {/* ✅ PRESERVED: Jobs summary exactly as before */}
-      <div className="myjobs-summary">
-        <div className="myjobs-summary-card">
-          <span className="myjobs-summary-number">{jobs.filter(j => j.status === 'active').length}</span>
-          <span className="myjobs-summary-label">Active Jobs</span>
+      {/* Error Message */}
+      {error && (
+        <div className="myjobs-error-message">
+          <AlertCircle size={20} />
+          <span>{error}</span>
+          <button onClick={handleRefresh} className="myjobs-retry-btn">
+            Try Again
+          </button>
         </div>
-        <div className="myjobs-summary-card">
-          <span className="myjobs-summary-number">{jobs.reduce((sum, job) => sum + job.applicants, 0)}</span>
-          <span className="myjobs-summary-label">Total Applications</span>
-        </div>
-        <div className="myjobs-summary-card">
-          <span className="myjobs-summary-number">{jobs.reduce((sum, job) => sum + job.views, 0)}</span>
-          <span className="myjobs-summary-label">Total Views</span>
-        </div>
-      </div>
+      )}
 
-      {/* ✅ PRESERVED: Jobs list exactly as before */}
-      <div className="myjobs-list">
-        {filteredJobs.length > 0 ? (
-          filteredJobs.map(renderJobCard)
-        ) : (
-          <div className="myjobs-empty-state">
-            <h3>No jobs found</h3>
-            <p>
-              {searchTerm || statusFilter !== 'all' 
-                ? 'Try adjusting your search or filters' 
-                : 'Start by posting your first job'
-              }
-            </p>
-            {!searchTerm && statusFilter === 'all' && (
-              <button 
-                onClick={onCreateJob}
-                className="myjobs-btn myjobs-btn-primary"
+      {/* Loading State */}
+      {isLoading && (
+        <div className="myjobs-loading">
+          <RefreshCw size={24} className="spinning" />
+          <p>Loading your job postings...</p>
+        </div>
+      )}
+
+      {/* Content - εμφανίζεται μόνο αν δεν φορτώνει */}
+      {!isLoading && (
+        <>
+          {/* Filters */}
+          <div className="myjobs-filters">
+            <div className="myjobs-search-box">
+              <Search size={20} />
+              <input
+                type="text"
+                placeholder="Search jobs by title, company or department..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="myjobs-search-input"
+              />
+            </div>
+            
+            <div className="myjobs-filter-group">
+              <Filter size={20} />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="myjobs-filter-select"
               >
-                <Plus size={20} />
-                Post Your First Job
-              </button>
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="closed">Closed</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Jobs Summary */}
+          <div className="myjobs-summary">
+            <div className="myjobs-summary-card">
+              <span className="myjobs-summary-number">{jobs.filter(j => !j.status || j.status === 'active').length}</span>
+              <span className="myjobs-summary-label">Active Jobs</span>
+            </div>
+            <div className="myjobs-summary-card">
+              <span className="myjobs-summary-number">{jobs.reduce((sum, job) => sum + (job.applicants || 0), 0)}</span>
+              <span className="myjobs-summary-label">Total Applications</span>
+            </div>
+            <div className="myjobs-summary-card">
+              <span className="myjobs-summary-number">{jobs.reduce((sum, job) => sum + (job.views || 0), 0)}</span>
+              <span className="myjobs-summary-label">Total Views</span>
+            </div>
+          </div>
+
+          {/* Jobs List */}
+          <div className="myjobs-list">
+            {filteredJobs.length > 0 ? (
+              filteredJobs.map(renderJobCard)
+            ) : (
+              <div className="myjobs-empty-state">
+                <h3>{jobs.length === 0 ? 'No jobs posted yet' : 'No jobs match your filters'}</h3>
+                <p>
+                  {jobs.length === 0 
+                    ? 'Start by posting your first job to attract candidates'
+                    : 'Try adjusting your search or filters to see more results'
+                  }
+                </p>
+                {jobs.length === 0 && (
+                  <button 
+                    onClick={onCreateJob}
+                    className="myjobs-btn myjobs-btn-primary"
+                  >
+                    <Plus size={20} />
+                    Post Your First Job
+                  </button>
+                )}
+              </div>
             )}
           </div>
-        )}
-      </div>
+        </>
+      )}
 
-      {/* ✅ PRESERVED: All modals exactly as before */}
+      {/* Modals */}
       {showJobDetails && renderJobDetails()}
 
       <EditJobModal

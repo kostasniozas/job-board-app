@@ -1,5 +1,5 @@
 // ============================================
-// USER MODEL - Δομή δεδομένων χρήστη
+// USER MODEL - User data structure
 // ============================================
 
 const bcrypt = require('bcryptjs');
@@ -9,11 +9,11 @@ class User {
   constructor(userData) {
     this.userType = userData.userType; // 'employer' ή 'jobSeeker'
     this.email = userData.email;
-    this.password = userData.password; // θα γίνει hash
+    this.password = userData.password; // will be hashed
     this.createdAt = new Date();
     this.updatedAt = new Date();
     
-    // Profile data - διαφορετικά για κάθε user type
+    // Profile data - different for each user type
     this.profile = this.userType === 'employer' 
       ? this.createEmployerProfile(userData) 
       : this.createJobSeekerProfile(userData);
@@ -29,7 +29,7 @@ class User {
       description: userData.description || '',
       location: userData.location || '',
       logo: userData.logo || '',
-      // Στατιστικά
+      // Statistics
       jobsPosted: 0,
       activeJobs: 0,
       totalApplications: 0
@@ -56,23 +56,23 @@ class User {
       jobTypes: userData.jobTypes || [], // ['full-time', 'remote', 'contract']
       categories: userData.categories || [], // ['technology', 'marketing', etc]
       
-      // Files και links
+      // Files and links
       cv: userData.cv || '',
       portfolio: userData.portfolio || '',
       linkedIn: userData.linkedIn || '',
       github: userData.github || '',
       
-      // Στατιστικά
+      // Statistics
       applicationsSubmitted: 0,
       interviewsReceived: 0,
       savedJobs: []
     };
   }
 
-  // Hash password πριν την αποθήκευση
+  // Hash password before saving
   async hashPassword() {
     if (this.password) {
-      const saltRounds = 12; // Πολύ ασφαλές
+      const saltRounds = 12; // Very secure
       this.password = await bcrypt.hash(this.password, saltRounds);
     }
   }
@@ -84,7 +84,7 @@ class User {
   }
 
   validatePassword(plainPassword) {
-    // Τουλάχιστον 6 χαρακτήρες (πιο user-friendly)
+    // At least 6 characters (user-friendly)
     const minLength = plainPassword.length >= 6;
     
     return {
@@ -98,11 +98,11 @@ class User {
   validateRequired() {
     const errors = [];
     
-    if (!this.email) errors.push('Email απαιτείται');
-    if (!this.password) errors.push('Password απαιτείται');
-    if (!this.userType) errors.push('User type απαιτείται');
+    if (!this.email) errors.push('Email is required');
+    if (!this.password) errors.push('Password is required');
+    if (!this.userType) errors.push('User type is required');
     
-    if (!this.validateEmail()) errors.push('Μη έγκυρο email format');
+    if (!this.validateEmail()) errors.push('Invalid email format');
     
     return {
       isValid: errors.length === 0,
@@ -110,35 +110,35 @@ class User {
     };
   }
 
-  // Prepare για αποθήκευση στη βάση
+  // Prepare for database save
   async prepareForSave() {
     await this.hashPassword();
     this.updatedAt = new Date();
     
-    // Αφαιρούμε undefined values
+    // Remove undefined values
     return JSON.parse(JSON.stringify(this));
   }
 
-  // Static method για comparison password κατά το login
+  // Static method for password comparison during login
   static async comparePassword(plainPassword, hashedPassword) {
     return await bcrypt.compare(plainPassword, hashedPassword);
   }
 
-  // Static method για εύρεση χρήστη από email
+  // Static method to find user by email
   static async findByEmail(db, email) {
     return await db.collection('users').findOne({ email: email.toLowerCase() });
   }
 
-  // Static method για δημιουργία χρήστη
+  // Static method for user creation
   static async create(db, userData) {
     try {
-      // Έλεγχος αν υπάρχει ήδη χρήστης με αυτό το email
+      // Check if user with this email already exists
       const existingUser = await User.findByEmail(db, userData.email);
       if (existingUser) {
-        throw new Error('Χρήστης με αυτό το email υπάρχει ήδη');
+        throw new Error('User with this email already exists');
       }
 
-      // Δημιουργία νέου user object
+      // Create new user object
       const user = new User(userData);
       
       // Validation
@@ -153,23 +153,23 @@ class User {
           .filter(key => passwordValidation.errors[key])
           .map(key => {
             switch(key) {
-              case 'minLength': return 'Password πρέπει να έχει τουλάχιστον 6 χαρακτήρες';
+              case 'minLength': return 'Password must be at least 6 characters';
               default: return '';
             }
           });
         throw new Error(passwordErrors.join(', '));
       }
 
-      // Προετοιμασία για αποθήκευση
+      // Prepare for save
       const userToSave = await user.prepareForSave();
       
-      // Convert email σε lowercase για consistency
+      // Convert email to lowercase for consistency
       userToSave.email = userToSave.email.toLowerCase();
 
-      // Αποθήκευση στη βάση
+      // Save to database
       const result = await db.collection('users').insertOne(userToSave);
       
-      // Επιστροφή του χρήστη χωρίς το password
+      // Return user without password
       const savedUser = await db.collection('users').findOne(
         { _id: result.insertedId },
         { projection: { password: 0 } } // Exclude password
@@ -182,31 +182,48 @@ class User {
     }
   }
 
-  // Static method για authentication
+  // Static method for authentication - FIXED
   static async authenticate(db, email, password) {
     try {
-      // Βρες χρήστη
+      // Find user
       const user = await User.findByEmail(db, email);
       if (!user) {
-        throw new Error('Λάθος email ή password');
+        throw new Error('Invalid email or password');
       }
 
-      // Έλεγχος password
+      // Check password
       const isValidPassword = await User.comparePassword(password, user.password);
       if (!isValidPassword) {
-        throw new Error('Λάθος email ή password');
+        throw new Error('Invalid email or password');
       }
 
-      // Επιστροφή χρήστη χωρίς password
-      const { password: _, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+      // FIXED: Return with flattened profile data
+      const { password: _, profile, ...userWithoutPassword } = user;
+      
+      return {
+        ...userWithoutPassword,
+        // Add profile fields to top level for job seekers
+        ...(user.userType === 'jobSeeker' && profile ? {
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          phone: profile.phone,
+          location: profile.location
+        } : {}),
+        // Add company name for employers
+        ...(user.userType === 'employer' && profile ? {
+          companyName: profile.companyName,
+          industry: profile.industry
+        } : {}),
+        // Keep profile object for full access if needed
+        profile: profile
+      };
 
     } catch (error) {
       throw error;
     }
   }
 
-  // Static method για update profile
+  // Static method for profile update
   static async updateProfile(db, userId, profileData) {
     try {
       const updateData = {
@@ -220,10 +237,10 @@ class User {
       );
 
       if (result.matchedCount === 0) {
-        throw new Error('Χρήστης δεν βρέθηκε');
+        throw new Error('User not found');
       }
 
-      // Επιστροφή updated χρήστη χωρίς password
+      // Return updated user without password
       const updatedUser = await db.collection('users').findOne(
         { _id: new ObjectId(userId) },
         { projection: { password: 0 } }

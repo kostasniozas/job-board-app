@@ -10,33 +10,33 @@ const { requireAuth, addUserToRequest } = require('../middleware/auth');
 const router = express.Router();
 
 // ============================================
-// POST /api/auth/register - Εγγραφή χρήστη
+// POST /api/auth/register - User Registration
 // ============================================
 
 router.post('/register', [
   // Validation rules
   body('email')
     .isEmail()
-    .withMessage('Μη έγκυρο email')
-    .normalizeEmail(), // Καθαρίζει το email
+    .withMessage('Invalid email')
+    .normalizeEmail(), // Cleans the email
   
   body('password')
     .isLength({ min: 6 })
-    .withMessage('Password πρέπει να έχει τουλάχιστον 6 χαρακτήρες'),
+    .withMessage('Password must be at least 6 characters'),
   
   body('userType')
     .isIn(['employer', 'jobSeeker'])
-    .withMessage('User type πρέπει να είναι employer ή jobSeeker'),
+    .withMessage('User type must be employer or jobSeeker'),
     
-  // Για job seekers - μόνο email/password στο register
-  // Το profile θα συμπληρωθεί στο ProfileCompletion step
+  // For job seekers - only email/password in register
+  // Profile will be completed in ProfileCompletion step
   
-  // Για employers - μόνο email/password στο register  
-  // Το company profile θα συμπληρωθεί στο EmployerProfile step
+  // For employers - only email/password in register  
+  // Company profile will be completed in EmployerProfile step
     
 ], async (req, res) => {
   try {
-    // Έλεγχος validation errors
+    // Check validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -45,17 +45,17 @@ router.post('/register', [
       });
     }
 
-    // Δημιουργία χρήστη
+    // Create user
     const user = await User.create(req.db, req.body);
     
-    // Δημιουργία session (αυτόματο login μετά την εγγραφή)
+    // Create session (automatic login after registration)
     req.session.userId = user._id.toString();
     req.session.userType = user.userType;
     req.session.email = user.email;
     
-    // Response με user data (χωρίς password)
+    // Response with user data (without password)
     res.status(201).json({
-      message: 'Εγγραφή επιτυχής',
+      message: 'Registration successful',
       user: user,
       session: {
         userId: req.session.userId,
@@ -75,23 +75,23 @@ router.post('/register', [
 });
 
 // ============================================
-// POST /api/auth/login - Σύνδεση χρήστη
+// POST /api/auth/login - User Login
 // ============================================
 
 router.post('/login', [
   // Validation rules
   body('email')
     .isEmail()
-    .withMessage('Μη έγκυρο email')
+    .withMessage('Invalid email')
     .normalizeEmail(),
     
   body('password')
     .notEmpty()
-    .withMessage('Password απαιτείται')
+    .withMessage('Password is required')
     
 ], async (req, res) => {
   try {
-    // Έλεγχος validation errors
+    // Check validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -105,13 +105,13 @@ router.post('/login', [
     // Authentication
     const user = await User.authenticate(req.db, email, password);
     
-    // Δημιουργία session
+    // Create session
     req.session.userId = user._id.toString();
     req.session.userType = user.userType;
     req.session.email = user.email;
     
     res.json({
-      message: 'Σύνδεση επιτυχής',
+      message: 'Login successful',
       user: user,
       session: {
         userId: req.session.userId,
@@ -123,44 +123,44 @@ router.post('/login', [
   } catch (error) {
     console.error('Login error:', error.message);
     
-    // Generic error message για ασφάλεια (δεν αποκαλύπτουμε αν το email υπάρχει)
+    // Generic error message for security (don't reveal if email exists)
     res.status(401).json({
       error: 'Login failed',
-      message: 'Λάθος email ή password'
+      message: 'Invalid email or password'
     });
   }
 });
 
 // ============================================
-// POST /api/auth/logout - Αποσύνδεση χρήστη
+// POST /api/auth/logout - User Logout
 // ============================================
 
 router.post('/logout', requireAuth, (req, res) => {
-  // Διαγραφή session
+  // Delete session
   req.session.destroy((err) => {
     if (err) {
       console.error('Logout error:', err);
       return res.status(500).json({
         error: 'Logout failed',
-        message: 'Δεν μπόρεσε να γίνει logout'
+        message: 'Could not logout'
       });
     }
     
-    // Διαγραφή session cookie
+    // Clear session cookie
     res.clearCookie('jobboard.sid');
     
     res.json({
-      message: 'Αποσύνδεση επιτυχής'
+      message: 'Logout successful'
     });
   });
 });
 
 // ============================================
-// GET /api/auth/me - Πληροφορίες τρέχοντος χρήστη
+// GET /api/auth/me - Current User Information
 // ============================================
 
 router.get('/me', requireAuth, addUserToRequest, (req, res) => {
-  // Επιστρέφει τις πληροφορίες του συνδεδεμένου χρήστη
+  // Returns logged-in user information
   res.json({
     user: req.user,
     session: {
@@ -172,11 +172,11 @@ router.get('/me', requireAuth, addUserToRequest, (req, res) => {
 });
 
 // ============================================
-// GET /api/auth/check - Έλεγχος αν είναι logged in
+// GET /api/auth/check - Check if logged in
 // ============================================
 
 router.get('/check', (req, res) => {
-  // Απλός έλεγχος session χωρίς να απαιτεί authentication
+  // Simple session check without requiring authentication
   if (req.session && req.session.userId) {
     res.json({
       isAuthenticated: true,

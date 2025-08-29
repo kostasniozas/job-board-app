@@ -1,6 +1,6 @@
-// Candidates.jsx - UPDATED for Visual Consistency with JobSeeker Dashboard
+// Candidates.jsx - Real Backend Integration
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Search, 
   Filter, 
@@ -18,84 +18,20 @@ import {
   UserCheck,
   MapPin,
   Video,
-  Send
+  Send,
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
+import { applicationsAPI } from '../../services/api';
 import './Candidates.css';
 
 function Candidates({ userInfo }) {
-  // Step 1: Privacy-compliant candidates state - PRESERVED EXACTLY
-  const [candidates, setCandidates] = useState([
-    {
-      id: 1,
-      initials: 'M.K.',
-      profileId: 'candidate_001',
-      appliedFor: 'Senior Frontend Developer',
-      appliedDate: '2024-02-20',
-      status: 'pending',
-      interviewStatus: 'not_requested', // not_requested, requested, questions_sent, completed, reviewed
-      rating: 0, // Changed to 0 - unrated
-      experience: '5 years',
-      education: 'Computer Science Degree',
-      location: 'Athens, Greece',
-      skills: ['React', 'JavaScript', 'TypeScript', 'Node.js', 'CSS'],
-      summary: 'Experienced frontend developer with expertise in React and modern web technologies. Passionate about creating user-friendly interfaces.',
-      portfolioPreview: 'Available upon request',
-      lastActive: '2 days ago'
-    },
-    {
-      id: 2,
-      initials: 'J.A.',
-      profileId: 'candidate_002',
-      appliedFor: 'Marketing Manager',
-      appliedDate: '2024-02-18',
-      status: 'approved',
-      interviewStatus: 'completed',
-      rating: 5,
-      experience: '3 years',
-      education: 'Marketing Degree',
-      location: 'Thessaloniki, Greece',
-      skills: ['Digital Marketing', 'SEO', 'Social Media', 'Analytics', 'Content Creation'],
-      summary: 'Creative marketing professional with proven track record in digital campaigns and brand growth.',
-      portfolioPreview: 'Available upon request',
-      lastActive: '1 day ago'
-    },
-    {
-      id: 3,
-      initials: 'S.P.',
-      profileId: 'candidate_003',
-      appliedFor: 'UX Designer',
-      appliedDate: '2024-02-15',
-      status: 'rejected',
-      interviewStatus: 'not_requested',
-      rating: 3,
-      experience: '2 years',
-      education: 'Design Degree',
-      location: 'Athens, Greece',
-      skills: ['Figma', 'Adobe XD', 'User Research', 'Prototyping', 'UI Design'],
-      summary: 'Junior UX designer with strong foundation in user-centered design principles and modern design tools.',
-      portfolioPreview: 'Available upon request',
-      lastActive: '5 days ago'
-    },
-    {
-      id: 4,
-      initials: 'D.N.',
-      profileId: 'candidate_004',
-      appliedFor: 'Senior Frontend Developer',
-      appliedDate: '2024-02-22',
-      status: 'pending',
-      interviewStatus: 'questions_sent',
-      rating: 4,
-      experience: '4 years',
-      education: 'Computer Engineering Degree',
-      location: 'Patras, Greece',
-      skills: ['React', 'Python', 'Django', 'PostgreSQL', 'AWS'],
-      summary: 'Full-stack developer with experience in both frontend and backend technologies. Strong problem-solving skills.',
-      portfolioPreview: 'Available upon request',
-      lastActive: '12 hours ago'
-    }
-  ]);
+  // Real backend states
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Step 2: ALL STATE PRESERVED EXACTLY
+  // UI states
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [jobFilter, setJobFilter] = useState('all');
@@ -106,49 +42,151 @@ function Candidates({ userInfo }) {
   const [interviewCandidate, setInterviewCandidate] = useState(null);
   const [customQuestions, setCustomQuestions] = useState(['', '', '', '']);
 
-  // Step 3: ALL FUNCTIONALITY PRESERVED EXACTLY
-  const randomQuestionsPool = [
-    "Tell us about a challenging project you've worked on recently.",
-    "How do you handle tight deadlines and pressure?",
-    "Describe your ideal work environment.",
-    "What motivates you in your professional life?",
-    "How do you stay updated with industry trends?",
-    "Tell us about a time you had to learn something new quickly.",
-    "How do you handle constructive criticism?",
-    "What's your approach to teamwork and collaboration?",
-    "Describe a mistake you made and how you handled it.",
-    "Where do you see yourself in 5 years?",
-    "How do you prioritize your work when you have multiple tasks?",
-    "Tell us about a time you went above and beyond in your role."
-  ];
+  // Load candidates data from backend
+  const loadCandidates = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      console.log('Loading candidates from backend...');
+      
+      const response = await applicationsAPI.getEmployerApplications();
+      console.log('Candidates response:', response);
+      
+      if (response.success) {
+        setCandidates(response.applications || []);
+        console.log(`Loaded ${response.applications?.length || 0} candidates`);
+      } else {
+        setError(response.message || 'Failed to load candidates');
+        setCandidates([]);
+      }
+    } catch (err) {
+      console.error('Error loading candidates:', err);
+      setError(err.message || 'Failed to load candidates. Please try again.');
+      setCandidates([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Load candidates on component mount
+  useEffect(() => {
+    loadCandidates();
+  }, []);
+
+  // Backend integration functions
+  const handleApproveCandidate = async (candidateId) => {
+    try {
+      console.log(`Approving candidate ${candidateId}`);
+      const response = await applicationsAPI.updateApplicationStatus(candidateId, 'approved');
+      
+      if (response.success) {
+        setCandidates(prev => prev.map(candidate => 
+          candidate.id === candidateId ? { ...candidate, status: 'approved' } : candidate
+        ));
+        console.log('Candidate approved successfully');
+      } else {
+        alert(response.message || 'Failed to approve candidate');
+      }
+    } catch (error) {
+      console.error('Error approving candidate:', error);
+      alert('Failed to approve candidate. Please try again.');
+    }
+  };
+
+  const handleRejectCandidate = async (candidateId) => {
+    try {
+      console.log(`Rejecting candidate ${candidateId}`);
+      const response = await applicationsAPI.updateApplicationStatus(candidateId, 'rejected');
+      
+      if (response.success) {
+        setCandidates(prev => prev.map(candidate => 
+          candidate.id === candidateId ? { ...candidate, status: 'rejected' } : candidate
+        ));
+        console.log('Candidate rejected successfully');
+      } else {
+        alert(response.message || 'Failed to reject candidate');
+      }
+    } catch (error) {
+      console.error('Error rejecting candidate:', error);
+      alert('Failed to reject candidate. Please try again.');
+    }
+  };
+
+  const handleRateCandidate = async (candidateId, rating) => {
+    try {
+      console.log(`Rating candidate ${candidateId} with ${rating} stars`);
+      const response = await applicationsAPI.rateCandidate(candidateId, rating);
+      
+      if (response.success) {
+        setCandidates(prev => prev.map(candidate => 
+          candidate.id === candidateId ? { ...candidate, rating } : candidate
+        ));
+        console.log('Candidate rated successfully');
+      } else {
+        alert(response.message || 'Failed to rate candidate');
+      }
+    } catch (error) {
+      console.error('Error rating candidate:', error);
+      alert('Failed to rate candidate. Please try again.');
+    }
+  };
+
+  const handleSendInterviewQuestions = async () => {
+    if (customQuestions.some(q => q.trim() === '')) {
+      alert('Please fill in all 4 custom questions.');
+      return;
+    }
+
+    try {
+      const randomQuestions = [
+        "Tell us about a challenging project you've worked on recently.",
+        "How do you handle tight deadlines and pressure?",
+        "Describe your ideal work environment.",
+        "What motivates you in your professional life?",
+        "How do you stay updated with industry trends?"
+      ].slice(0, 3); // Take 3 random questions
+
+      const allQuestions = [...customQuestions, ...randomQuestions];
+      
+      console.log(`Sending interview questions to candidate ${interviewCandidate.id}`);
+      const response = await applicationsAPI.sendInterviewQuestions(interviewCandidate.id, allQuestions);
+      
+      if (response.success) {
+        setCandidates(prev => prev.map(candidate => 
+          candidate.id === interviewCandidate.id 
+            ? { ...candidate, interviewStatus: 'questions_sent' } 
+            : candidate
+        ));
+        
+        alert(`Video interview request sent to ${interviewCandidate.initials}!\n\nQuestions included:\n${allQuestions.map((q, i) => `${i + 1}. ${q}`).join('\n')}`);
+        setShowInterviewModal(false);
+        setInterviewCandidate(null);
+      } else {
+        alert(response.message || 'Failed to send interview questions');
+      }
+    } catch (error) {
+      console.error('Error sending interview questions:', error);
+      alert('Failed to send interview questions. Please try again.');
+    }
+  };
+
+  // Utility functions (unchanged)
   const uniqueJobs = [...new Set(candidates.map(c => c.appliedFor))];
 
   const filteredCandidates = candidates.filter(candidate => {
     const matchesSearch = candidate.initials.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          candidate.appliedFor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         candidate.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()));
+                         (candidate.skills && candidate.skills.some(skill => 
+                           skill.toLowerCase().includes(searchTerm.toLowerCase())
+                         ));
     const matchesStatus = statusFilter === 'all' || candidate.status === statusFilter;
     const matchesJob = jobFilter === 'all' || candidate.appliedFor === jobFilter;
     return matchesSearch && matchesStatus && matchesJob;
   });
 
-  // Step 4: ALL HANDLER FUNCTIONS PRESERVED EXACTLY
   const handleViewCandidate = (candidate) => {
     setSelectedCandidate(candidate);
     setShowCandidateDetails(true);
-  };
-
-  const handleApproveCandidate = (candidateId) => {
-    setCandidates(prev => prev.map(candidate => 
-      candidate.id === candidateId ? { ...candidate, status: 'approved' } : candidate
-    ));
-  };
-
-  const handleRejectCandidate = (candidateId) => {
-    setCandidates(prev => prev.map(candidate => 
-      candidate.id === candidateId ? { ...candidate, status: 'rejected' } : candidate
-    ));
   };
 
   const handleRequestInterview = (candidate) => {
@@ -157,47 +195,12 @@ function Candidates({ userInfo }) {
     setShowInterviewModal(true);
   };
 
-  const handleSendInterviewQuestions = () => {
-    if (customQuestions.some(q => q.trim() === '')) {
-      alert('Please fill in all 4 custom questions.');
-      return;
-    }
-
-    const shuffled = [...randomQuestionsPool].sort(() => 0.5 - Math.random());
-    const randomQuestions = shuffled.slice(0, 3);
-    
-    setCandidates(prev => prev.map(candidate => 
-      candidate.id === interviewCandidate.id 
-        ? { ...candidate, interviewStatus: 'questions_sent' } 
-        : candidate
-    ));
-
-    const allQuestions = [...customQuestions, ...randomQuestions];
-    console.log('Interview questions sent:', allQuestions);
-    
-    alert(`Video interview request sent to ${interviewCandidate.initials}!\n\nQuestions included:\n${allQuestions.map((q, i) => `${i + 1}. ${q}`).join('\n')}`);
-    
-    setShowInterviewModal(false);
-    setInterviewCandidate(null);
-  };
-
-  const handleRateCandidate = (candidateId, rating) => {
-    setCandidates(prev => prev.map(candidate => 
-      candidate.id === candidateId ? { ...candidate, rating } : candidate
-    ));
-  };
-
-  // Step 5: ALL UTILITY FUNCTIONS PRESERVED EXACTLY
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'pending':
-        return 'candidates-status-pending';
-      case 'approved':
-        return 'candidates-status-approved';
-      case 'rejected':
-        return 'candidates-status-rejected';
-      default:
-        return 'candidates-status-default';
+      case 'pending': return 'candidates-status-pending';
+      case 'approved': return 'candidates-status-approved';
+      case 'rejected': return 'candidates-status-rejected';
+      default: return 'candidates-status-default';
     }
   };
 
@@ -224,7 +227,6 @@ function Candidates({ userInfo }) {
     });
   };
 
-  // Step 6: RATING FUNCTION PRESERVED EXACTLY
   const renderRating = (rating, candidateId, interactive = false) => {
     const isHovering = hoveredStar.candidateId === candidateId;
     const displayRating = isHovering ? hoveredStar.star : rating;
@@ -240,7 +242,7 @@ function Candidates({ userInfo }) {
             className={`candidates-star ${
               star <= displayRating ? 'active' : ''
             } ${interactive ? 'interactive' : ''}`}
-            disabled={!interactive}
+            disabled={!interactive || loading}
             title={interactive ? `Rate ${star} star${star !== 1 ? 's' : ''}` : ''}
           >
             <Star size={16} />
@@ -255,7 +257,6 @@ function Candidates({ userInfo }) {
     );
   };
 
-  // Step 7: CANDIDATE CARD FUNCTION PRESERVED EXACTLY
   const renderCandidateCard = (candidate) => {
     const interviewStatus = getInterviewStatusDisplay(candidate.interviewStatus);
     const InterviewIcon = interviewStatus.icon;
@@ -276,7 +277,7 @@ function Candidates({ userInfo }) {
               </span>
               <span className="candidates-experience">
                 <Briefcase size={14} />
-                {candidate.experience}
+                {candidate.experience || 'Experience not specified'}
               </span>
               <span className="candidates-last-active">
                 <Clock size={14} />
@@ -302,25 +303,36 @@ function Candidates({ userInfo }) {
             </div>
           </div>
 
-          <div className="candidates-skills">
-            <strong>Skills:</strong>
-            <div className="candidates-skills-tags">
-              {candidate.skills.slice(0, 4).map(skill => (
-                <span key={skill} className="candidates-skill-tag">{skill}</span>
-              ))}
-              {candidate.skills.length > 4 && (
-                <span className="candidates-skill-more">+{candidate.skills.length - 4} more</span>
-              )}
+          {candidate.skills && candidate.skills.length > 0 && (
+            <div className="candidates-skills">
+              <strong>Skills:</strong>
+              <div className="candidates-skills-tags">
+                {candidate.skills.slice(0, 4).map(skill => (
+                  <span key={skill} className="candidates-skill-tag">{skill}</span>
+                ))}
+                {candidate.skills.length > 4 && (
+                  <span className="candidates-skill-more">+{candidate.skills.length - 4} more</span>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="candidates-summary">
-            <p>{candidate.summary}</p>
-          </div>
+          {candidate.summary && (
+            <div className="candidates-summary">
+              <p>{candidate.summary}</p>
+            </div>
+          )}
 
           <div className="candidates-education-info">
-            <strong>Education:</strong> {candidate.education}
+            <strong>Education:</strong> {candidate.education || 'Not specified'}
           </div>
+
+          {candidate.coverLetter && (
+            <div className="candidates-cover-letter">
+              <strong>Cover Letter:</strong>
+              <p>{candidate.coverLetter.substring(0, 150)}{candidate.coverLetter.length > 150 ? '...' : ''}</p>
+            </div>
+          )}
         </div>
 
         <div className="candidates-card-footer">
@@ -328,6 +340,7 @@ function Candidates({ userInfo }) {
             <button 
               onClick={() => handleViewCandidate(candidate)}
               className="candidates-btn candidates-btn-outline"
+              disabled={loading}
             >
               <Eye size={16} />
               View Details
@@ -337,6 +350,7 @@ function Candidates({ userInfo }) {
               <button 
                 onClick={() => handleRequestInterview(candidate)}
                 className={`candidates-btn candidates-interview-btn ${interviewStatus.className}`}
+                disabled={loading}
               >
                 <InterviewIcon size={16} />
                 {interviewStatus.text}
@@ -355,6 +369,7 @@ function Candidates({ userInfo }) {
                 <button 
                   onClick={() => handleApproveCandidate(candidate.id)}
                   className="candidates-btn candidates-btn-success"
+                  disabled={loading}
                 >
                   <CheckCircle size={16} />
                   Approve
@@ -362,6 +377,7 @@ function Candidates({ userInfo }) {
                 <button 
                   onClick={() => handleRejectCandidate(candidate.id)}
                   className="candidates-btn candidates-btn-danger"
+                  disabled={loading}
                 >
                   <XCircle size={16} />
                   Reject
@@ -374,7 +390,7 @@ function Candidates({ userInfo }) {
     );
   };
 
-  // Step 8: INTERVIEW MODAL PRESERVED EXACTLY
+  // Interview Modal (unchanged structure, updated handler)
   const renderInterviewModal = () => {
     if (!showInterviewModal || !interviewCandidate) return null;
 
@@ -400,7 +416,7 @@ function Candidates({ userInfo }) {
               <div className="interview-info-grid">
                 <div><strong>Candidate:</strong> {interviewCandidate.initials}</div>
                 <div><strong>Position:</strong> {interviewCandidate.appliedFor}</div>
-                <div><strong>Experience:</strong> {interviewCandidate.experience}</div>
+                <div><strong>Experience:</strong> {interviewCandidate.experience || 'Not specified'}</div>
               </div>
             </div>
 
@@ -434,16 +450,6 @@ function Candidates({ userInfo }) {
                 ))}
               </div>
             </div>
-
-            <div className="interview-card">
-              <h3>Sample Random Questions (3 will be selected):</h3>
-              <ul className="interview-preview-list">
-                {randomQuestionsPool.slice(0, 6).map((question, index) => (
-                  <li key={index}>{question}</li>
-                ))}
-                <li><em>...and {randomQuestionsPool.length - 6} more</em></li>
-              </ul>
-            </div>
           </div>
           
           <div className="interview-modal-footer">
@@ -456,7 +462,7 @@ function Candidates({ userInfo }) {
             <button 
               onClick={handleSendInterviewQuestions}
               className="interview-btn interview-btn-primary"
-              disabled={customQuestions.some(q => q.trim() === '')}
+              disabled={customQuestions.some(q => q.trim() === '') || loading}
             >
               <Send size={16} />
               Send Interview Request
@@ -467,7 +473,7 @@ function Candidates({ userInfo }) {
     );
   };
 
-  // Step 9: CANDIDATE DETAILS MODAL PRESERVED EXACTLY
+  // Candidate Details Modal (unchanged structure)
   const renderCandidateDetails = () => {
     if (!selectedCandidate) return null;
 
@@ -523,11 +529,11 @@ function Candidates({ userInfo }) {
                 </h4>
                 <div className="candidates-detail-item">
                   <Briefcase size={16} />
-                  <span>{selectedCandidate.experience} experience</span>
+                  <span>{selectedCandidate.experience || 'Experience not specified'}</span>
                 </div>
                 <div className="candidates-detail-item">
                   <GraduationCap size={16} />
-                  <span>{selectedCandidate.education}</span>
+                  <span>{selectedCandidate.education || 'Education not specified'}</span>
                 </div>
                 <div className="candidates-detail-item">
                   <MapPin size={16} />
@@ -536,25 +542,39 @@ function Candidates({ userInfo }) {
               </div>
             </div>
 
-            <div className="candidates-detail-section">
-              <h4>
-                <User size={16} />
-                Skills
-              </h4>
-              <div className="candidates-skills-full">
-                {selectedCandidate.skills.map(skill => (
-                  <span key={skill} className="candidates-skill-tag">{skill}</span>
-                ))}
+            {selectedCandidate.skills && selectedCandidate.skills.length > 0 && (
+              <div className="candidates-detail-section">
+                <h4>
+                  <User size={16} />
+                  Skills
+                </h4>
+                <div className="candidates-skills-full">
+                  {selectedCandidate.skills.map(skill => (
+                    <span key={skill} className="candidates-skill-tag">{skill}</span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            <div className="candidates-detail-section">
-              <h4>
-                <MessageSquare size={16} />
-                Summary
-              </h4>
-              <p>{selectedCandidate.summary}</p>
-            </div>
+            {selectedCandidate.summary && (
+              <div className="candidates-detail-section">
+                <h4>
+                  <MessageSquare size={16} />
+                  Summary
+                </h4>
+                <p>{selectedCandidate.summary}</p>
+              </div>
+            )}
+
+            {selectedCandidate.coverLetter && (
+              <div className="candidates-detail-section">
+                <h4>
+                  <Mail size={16} />
+                  Cover Letter
+                </h4>
+                <p>{selectedCandidate.coverLetter}</p>
+              </div>
+            )}
 
             <div className="candidates-detail-section">
               <h4>
@@ -574,6 +594,7 @@ function Candidates({ userInfo }) {
                     handleRequestInterview(selectedCandidate);
                   }}
                   className="candidates-btn candidates-btn-primary"
+                  disabled={loading}
                 >
                   <Video size={16} />
                   Request Interview
@@ -592,18 +613,86 @@ function Candidates({ userInfo }) {
     );
   };
 
-  // Step 10: MAIN RENDER - UPDATED HEADER ONLY, EVERYTHING ELSE PRESERVED
+  // Main render
   return (
     <div className="candidates-container">
-      {/* ✅ UPDATED: Header with gradient background like other components */}
+      {/* Header with refresh button */}
       <div className="candidates-header">
         <div className="candidates-header-content">
           <h1>Candidate Applications</h1>
           <p>Review applications while respecting candidate privacy</p>
         </div>
+        <button 
+          className="btn btn-outline"
+          onClick={loadCandidates}
+          disabled={loading}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '12px 20px',
+            background: 'rgba(255,255,255,0.1)',
+            border: '2px solid rgba(255,255,255,0.3)',
+            color: 'white',
+            borderRadius: '12px',
+            cursor: loading ? 'not-allowed' : 'pointer'
+          }}
+        >
+          <RefreshCw size={16} className={loading ? 'spinning' : ''} />
+          Refresh
+        </button>
       </div>
 
-      {/* ✅ PRESERVED: All filters exactly as before */}
+      {/* Error message */}
+      {error && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          background: '#fee',
+          color: '#c33',
+          padding: '15px 20px',
+          borderRadius: '12px',
+          border: '2px solid #fcc',
+          marginBottom: '20px'
+        }}>
+          <AlertCircle size={20} />
+          <span>{error}</span>
+          <button 
+            onClick={loadCandidates} 
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#c33',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              padding: '0',
+              marginLeft: '10px'
+            }}
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {/* Loading state */}
+      {loading && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '10px',
+          padding: '40px',
+          background: 'rgba(255,255,255,0.05)',
+          borderRadius: '12px',
+          marginBottom: '20px'
+        }}>
+          <RefreshCw size={20} className="spinning" />
+          <span>Loading candidates...</span>
+        </div>
+      )}
+
+      {/* Filters */}
       <div className="candidates-filters">
         <div className="candidates-search-box">
           <Search size={20} />
@@ -642,7 +731,7 @@ function Candidates({ userInfo }) {
         </div>
       </div>
 
-      {/* ✅ PRESERVED: Summary cards exactly as before */}
+      {/* Summary cards */}
       <div className="candidates-summary">
         <div className="candidates-summary-card">
           <span className="candidates-summary-number">{candidates.filter(c => c.status === 'pending').length}</span>
@@ -662,24 +751,26 @@ function Candidates({ userInfo }) {
         </div>
       </div>
 
-      {/* ✅ PRESERVED: Candidates list exactly as before */}
+      {/* Candidates list */}
       <div className="candidates-list">
-        {filteredCandidates.length > 0 ? (
+        {!loading && filteredCandidates.length > 0 ? (
           filteredCandidates.map(renderCandidateCard)
-        ) : (
+        ) : !loading ? (
           <div className="candidates-empty-state">
             <h3>No candidates found</h3>
             <p>
-              {searchTerm || statusFilter !== 'all' || jobFilter !== 'all'
+              {candidates.length === 0 
+                ? 'No applications received yet. When job seekers apply for your jobs, they will appear here.' 
+                : searchTerm || statusFilter !== 'all' || jobFilter !== 'all'
                 ? 'Try adjusting your search or filters' 
-                : 'No applications received yet'
+                : 'No candidates match your criteria'
               }
             </p>
           </div>
-        )}
+        ) : null}
       </div>
 
-      {/* ✅ PRESERVED: All modals exactly as before */}
+      {/* Modals */}
       {renderInterviewModal()}
       {showCandidateDetails && renderCandidateDetails()}
     </div>

@@ -1,6 +1,6 @@
-// EmployerDashboard.jsx - Main Employer Dashboard with Full Integration
+// EmployerDashboard.jsx - Main Employer Dashboard with Real Backend Integration
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Plus, 
   Briefcase, 
@@ -14,8 +14,13 @@ import {
   Star,
   Target,
   Building,
-  Video
+  Video,
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
+
+// Import API
+import { jobsAPI } from '../../services/api';
 
 // Import the new components
 import PostJobForm from './PostJobForm';
@@ -39,15 +44,86 @@ function EmployerDashboard({ userInfo, onLogout }) {
   // Step 1: Navigation state
   const [activeSection, setActiveSection] = useState('overview');
 
-  // Step 2: Mock data for dashboard
-  const mockStats = {
-    activeJobs: 5,
-    totalApplications: 43,
-    todayViews: 12,
-    thisMonthHires: 3
+  // Step 2: ΝΕΕΣ STATES για real data από backend
+  const [dashboardStats, setDashboardStats] = useState({
+    activeJobs: 0,
+    totalApplications: 0,
+    todayViews: 0,
+    thisMonthHires: 0
+  });
+  
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+  const [statsError, setStatsError] = useState('');
+  const [jobs, setJobs] = useState([]);
+
+  // Step 3: Φόρτωση real data από backend
+  const fetchDashboardStats = async () => {
+    try {
+      setIsLoadingStats(true);
+      setStatsError('');
+      console.log('Fetching dashboard stats...');
+      
+      // Καλούμε το API για jobs
+      const response = await jobsAPI.getMyJobs();
+      console.log('Dashboard stats response:', response);
+      
+      if (response.success) {
+        const jobsData = response.jobs || [];
+        setJobs(jobsData);
+        
+        // Υπολογίζουμε τα πραγματικά statistics
+        const stats = calculateStats(jobsData);
+        setDashboardStats(stats);
+        
+        console.log('Calculated dashboard stats:', stats);
+      } else {
+        throw new Error(response.message || 'Failed to fetch dashboard data');
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      setStatsError(error.message || 'Failed to load dashboard data');
+      
+      // Fallback σε 0 αν αποτύχει
+      setDashboardStats({
+        activeJobs: 0,
+        totalApplications: 0,
+        todayViews: 0,
+        thisMonthHires: 0
+      });
+    } finally {
+      setIsLoadingStats(false);
+    }
   };
 
-  // Step 3: Navigation items
+  // Step 4: Συνάρτηση για υπολογισμό statistics από τα jobs
+  const calculateStats = (jobsData) => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    return {
+      // Active jobs: jobs που δεν έχουν status ή έχουν status 'active'
+      activeJobs: jobsData.filter(job => !job.status || job.status === 'active').length,
+      
+      // Total applications: άθροισμα όλων των applicants
+      totalApplications: jobsData.reduce((sum, job) => sum + (job.applicants || 0), 0),
+      
+      // Today views: άθροισμα views (προς το παρόν όλων, μπορεί να φιλτραριστεί αργότερα)
+      todayViews: jobsData.reduce((sum, job) => sum + (job.views || 0), 0),
+      
+      // This month hires: για τώρα 0, μπορεί να προστεθεί αργότερα από applications data
+      thisMonthHires: 0 // Placeholder - θα χρειαστεί applications API
+    };
+  };
+
+  // Step 5: Φόρτωση data όταν φορτώνει το component ή αλλάζει activeSection
+  useEffect(() => {
+    if (activeSection === 'overview') {
+      fetchDashboardStats();
+    }
+  }, [activeSection]);
+
+  // Step 6: Navigation items
   const navItems = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'post-job', label: 'Post Job', icon: Plus },
@@ -58,22 +134,31 @@ function EmployerDashboard({ userInfo, onLogout }) {
     { id: 'profile', label: 'Edit Profile', icon: User }
   ];
 
-  // Step 4: Handle navigation
+  // Step 7: Handle navigation
   const handleNavigation = (sectionId) => {
     setActiveSection(sectionId);
   };
 
-  // Step 5: Handle going back to dashboard from forms
+  // Step 8: Handle going back to dashboard from forms
   const handleBackToDashboard = () => {
     setActiveSection('overview');
+    // Refresh stats όταν γυρνάμε στο overview
+    if (activeSection !== 'overview') {
+      fetchDashboardStats();
+    }
   };
 
-  // Step 6: Handle creating new job from MyJobs component
+  // Step 9: Handle creating new job from MyJobs component
   const handleCreateJob = () => {
     setActiveSection('post-job');
   };
 
-  // Step 7: Render main content based on active section
+  // Step 10: Handle refreshing stats
+  const handleRefreshStats = () => {
+    fetchDashboardStats();
+  };
+
+  // Step 11: Render main content based on active section
   const renderMainContent = () => {
     switch (activeSection) {
       case 'overview':
@@ -81,23 +166,76 @@ function EmployerDashboard({ userInfo, onLogout }) {
           <div className="main-content">
             <div className="content-header">
               <div>
-                <h1>Welcome back, {userInfo?.firstName || 'Employer'}!</h1>
+                <h1>Welcome back, {userInfo?.companyName || `${userInfo?.firstName || ''} ${userInfo?.lastName || ''}`.trim() || 'Employer'}!</h1>
                 <p>Here's what's happening with your job postings today</p>
               </div>
-              <button className="btn btn-primary post-job-btn" onClick={() => setActiveSection('post-job')}>
-                <Plus size={20} />
-                Post New Job
-              </button>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <button 
+                  className="btn btn-outline"
+                  onClick={handleRefreshStats}
+                  disabled={isLoadingStats}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 20px',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '2px solid rgba(255,255,255,0.3)',
+                    color: 'white',
+                    borderRadius: '12px',
+                    cursor: isLoadingStats ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  <RefreshCw size={16} className={isLoadingStats ? 'spinning' : ''} />
+                  Refresh
+                </button>
+                <button className="btn btn-primary post-job-btn" onClick={() => setActiveSection('post-job')}>
+                  <Plus size={20} />
+                  Post New Job
+                </button>
+              </div>
             </div>
 
-            {/* Stats Cards */}
+            {/* Error Message */}
+            {statsError && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                background: '#fee',
+                color: '#c33',
+                padding: '15px 20px',
+                borderRadius: '12px',
+                border: '2px solid #fcc',
+                marginBottom: '20px'
+              }}>
+                <AlertCircle size={20} />
+                <span>{statsError}</span>
+                <button 
+                  onClick={handleRefreshStats} 
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#c33',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    padding: '0',
+                    marginLeft: '10px'
+                  }}
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
+
+            {/* Stats Cards με real data */}
             <div className="stats-grid">
               <div className="stat-card">
                 <div className="stat-icon">
                   <Briefcase size={24} />
                 </div>
                 <div className="stat-content">
-                  <h3>{mockStats.activeJobs}</h3>
+                  <h3>{isLoadingStats ? '...' : dashboardStats.activeJobs}</h3>
                   <p>Active Jobs</p>
                 </div>
               </div>
@@ -107,7 +245,7 @@ function EmployerDashboard({ userInfo, onLogout }) {
                   <Users size={24} />
                 </div>
                 <div className="stat-content">
-                  <h3>{mockStats.totalApplications}</h3>
+                  <h3>{isLoadingStats ? '...' : dashboardStats.totalApplications}</h3>
                   <p>Total Applications</p>
                 </div>
               </div>
@@ -117,7 +255,7 @@ function EmployerDashboard({ userInfo, onLogout }) {
                   <Eye size={24} />
                 </div>
                 <div className="stat-content">
-                  <h3>{mockStats.todayViews}</h3>
+                  <h3>{isLoadingStats ? '...' : dashboardStats.todayViews}</h3>
                   <p>Views Today</p>
                 </div>
               </div>
@@ -127,11 +265,28 @@ function EmployerDashboard({ userInfo, onLogout }) {
                   <Star size={24} />
                 </div>
                 <div className="stat-content">
-                  <h3>{mockStats.thisMonthHires}</h3>
+                  <h3>{isLoadingStats ? '...' : dashboardStats.thisMonthHires}</h3>
                   <p>Hires This Month</p>
                 </div>
               </div>
             </div>
+
+            {/* Debug info - μπορεί να αφαιρεθεί αργότερα */}
+            {process.env.NODE_ENV === 'development' && (
+              <div style={{
+                background: '#f0f8ff',
+                border: '1px solid #cce7ff',
+                borderRadius: '8px',
+                padding: '12px',
+                marginBottom: '20px',
+                fontSize: '0.85rem',
+                color: '#666'
+              }}>
+                <strong>Debug Info:</strong> Found {jobs.length} jobs total. 
+                Active: {jobs.filter(j => !j.status || j.status === 'active').length}, 
+                Closed: {jobs.filter(j => j.status === 'closed').length}
+              </div>
+            )}
 
             {/* Tips Section */}
             <div className="tips-section">
@@ -196,7 +351,7 @@ function EmployerDashboard({ userInfo, onLogout }) {
           </div>
         );
 
-      // ✅ INTEGRATED COMPONENTS
+      // INTEGRATED COMPONENTS
       case 'post-job':
         return <PostJobForm onBack={handleBackToDashboard} userInfo={userInfo} />;
 

@@ -53,6 +53,24 @@ export const authAPI = {
     return apiCall('/auth/logout', {
       method: 'POST',
     });
+  },
+
+  // Παίρνει τον τρέχοντα χρήστη με όλες τις πληροφορίες
+  getCurrentUser: async () => {
+    return apiCall('/auth/me');
+  },
+
+  // Ενημερώνει το προφίλ του χρήστη
+  updateProfile: async (profileData) => {
+    return apiCall('/auth/update-profile', {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+    });
+  },
+
+  // Έλεγχος αν είναι συνδεδεμένος
+  checkAuth: async () => {
+    return apiCall('/auth/check');
   }
 };
 
@@ -91,8 +109,61 @@ export const jobsAPI = {
     });
   },
 
+  // Κλείσιμο αγγελίας (αλλαγή status σε 'closed')
+  closeJob: async (jobId) => {
+    return apiCall(`/jobs/${jobId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ status: 'closed' }),
+    });
+  },
+
   // Λεπτομέρειες συγκεκριμένης αγγελίας
   getJobById: async (jobId) => {
     return apiCall(`/jobs/${jobId}`);
+  }
+};
+
+// APPLICATIONS API CALLS
+export const applicationsAPI = {
+  // Όλες οι αιτήσεις για τον συνδεδεμένο employer
+  getEmployerApplications: async () => {
+    return apiCall('/applications/employer');
+  },
+
+  // Αιτήσεις για συγκεκριμένο job
+  getJobApplications: async (jobId) => {
+    return apiCall(`/applications/job/${jobId}`);
+  },
+
+  // Δημιουργία νέας αίτησης (για job seekers)
+  submitApplication: async (applicationData) => {
+    return apiCall('/applications', {
+      method: 'POST',
+      body: JSON.stringify(applicationData),
+    });
+  },
+
+  // Ενημέρωση status αίτησης (approve/reject)
+  updateApplicationStatus: async (applicationId, status) => {
+    return apiCall(`/applications/${applicationId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+  },
+
+  // Rating candidate
+  rateCandidate: async (applicationId, rating) => {
+    return apiCall(`/applications/${applicationId}/rating`, {
+      method: 'PUT',
+      body: JSON.stringify({ rating }),
+    });
+  },
+
+  // Αποστολή interview questions
+  sendInterviewQuestions: async (applicationId, questions) => {
+    return apiCall(`/applications/${applicationId}/interview`, {
+      method: 'POST',
+      body: JSON.stringify({ questions }),
+    });
   }
 };

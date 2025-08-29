@@ -1,16 +1,17 @@
-// EditProfile.jsx - UPDATED for Visual Consistency with JobSeeker Dashboard
+// EditProfile.jsx - Real Backend Integration
 
-import { useState } from 'react';
-import { User, Save, Camera } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, Save, Camera, RefreshCw, AlertCircle } from 'lucide-react';
+import { authAPI } from '../../services/api';
 import './EditProfile.css';
 
-function EditProfile({ userInfo }) {
-  // Step 1: ALL STATE PRESERVED EXACTLY
+function EditProfile({ userInfo, onProfileUpdate }) {
+  // Real data states
   const [profileData, setProfileData] = useState({
     // Personal Info
-    firstName: userInfo?.firstName || '',
-    lastName: userInfo?.lastName || '',
-    email: userInfo?.email || '',
+    firstName: '',
+    lastName: '',
+    email: '',
     phone: '',
     
     // Company Info (for employers)
@@ -28,10 +29,73 @@ function EditProfile({ userInfo }) {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const [activeTab, setActiveTab] = useState('personal');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [loadError, setLoadError] = useState('');
 
-  // Step 2: ALL HANDLER FUNCTIONS PRESERVED EXACTLY
+  // Load user data from backend
+  const loadUserProfile = async () => {
+    try {
+      setIsLoading(true);
+      setLoadError('');
+      console.log('Loading user profile from backend...');
+      
+      const response = await authAPI.getCurrentUser(); // We need to create this
+      console.log('User profile response:', response);
+      
+      if (response.success) {
+        const user = response.user;
+        setProfileData({
+          firstName: user.firstName || '',
+          lastName: user.lastName || '',
+          email: user.email || '',
+          phone: user.phone || '',
+          companyName: user.profile?.companyName || '',
+          companySize: user.profile?.companySize || '',
+          industry: user.profile?.industry || '',
+          website: user.profile?.website || '',
+          location: user.profile?.location || '',
+          description: user.profile?.description || '',
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+      } else {
+        setLoadError(response.message || 'Failed to load profile');
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      setLoadError('Failed to load profile. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initialize with userInfo prop if available
+  useEffect(() => {
+    if (userInfo) {
+      setProfileData({
+        firstName: userInfo.firstName || '',
+        lastName: userInfo.lastName || '',
+        email: userInfo.email || '',
+        phone: userInfo.phone || '',
+        companyName: userInfo.profile?.companyName || '',
+        companySize: userInfo.profile?.companySize || '',
+        industry: userInfo.profile?.industry || '',
+        website: userInfo.profile?.website || '',
+        location: userInfo.profile?.location || '',
+        description: userInfo.profile?.description || '',
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } else {
+      loadUserProfile();
+    }
+  }, [userInfo]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfileData(prev => ({ ...prev, [name]: value }));
@@ -40,9 +104,13 @@ function EditProfile({ userInfo }) {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+    
+    // Clear success message when editing
+    if (successMessage) {
+      setSuccessMessage('');
+    }
   };
 
-  // Step 3: ALL VALIDATION LOGIC PRESERVED EXACTLY
   const validateForm = () => {
     const newErrors = {};
     
@@ -50,14 +118,40 @@ function EditProfile({ userInfo }) {
       if (!profileData.firstName.trim()) newErrors.firstName = 'First name is required';
       if (!profileData.lastName.trim()) newErrors.lastName = 'Last name is required';
       if (!profileData.email.trim()) newErrors.email = 'Email is required';
+      
+      // Email format validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (profileData.email && !emailRegex.test(profileData.email)) {
+        newErrors.email = 'Please enter a valid email address';
+      }
+      
+      // Phone validation (if provided)
+      if (profileData.phone && profileData.phone.length < 10) {
+        newErrors.phone = 'Please enter a valid phone number';
+      }
+    }
+    
+    if (activeTab === 'company') {
+      // Company validations are optional for most fields
+      if (profileData.website && !profileData.website.startsWith('http')) {
+        newErrors.website = 'Website must start with http:// or https://';
+      }
     }
     
     if (activeTab === 'password') {
-      if (profileData.newPassword && profileData.newPassword.length < 6) {
-        newErrors.newPassword = 'Password must be at least 6 characters';
-      }
-      if (profileData.newPassword !== profileData.confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match';
+      if (profileData.newPassword || profileData.currentPassword || profileData.confirmPassword) {
+        if (!profileData.currentPassword.trim()) {
+          newErrors.currentPassword = 'Current password is required to change password';
+        }
+        if (!profileData.newPassword.trim()) {
+          newErrors.newPassword = 'New password is required';
+        }
+        if (profileData.newPassword && profileData.newPassword.length < 6) {
+          newErrors.newPassword = 'Password must be at least 6 characters';
+        }
+        if (profileData.newPassword !== profileData.confirmPassword) {
+          newErrors.confirmPassword = 'Passwords do not match';
+        }
       }
     }
     
@@ -65,26 +159,108 @@ function EditProfile({ userInfo }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Step 4: FORM SUBMISSION LOGIC PRESERVED EXACTLY
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) return;
     
-    setIsLoading(true);
+    setIsSaving(true);
+    setErrors({});
+    setSuccessMessage('');
     
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Profile updated:', profileData);
-      setIsLoading(false);
-      alert('Profile updated successfully!');
-    }, 1500);
+    try {
+      let updateData = {};
+      
+      if (activeTab === 'personal') {
+        updateData = {
+          firstName: profileData.firstName.trim(),
+          lastName: profileData.lastName.trim(),
+          email: profileData.email.trim(),
+          phone: profileData.phone.trim()
+        };
+      } else if (activeTab === 'company') {
+        updateData = {
+          profile: {
+            companyName: profileData.companyName.trim(),
+            companySize: profileData.companySize,
+            industry: profileData.industry,
+            website: profileData.website.trim(),
+            location: profileData.location.trim(),
+            description: profileData.description.trim()
+          }
+        };
+      } else if (activeTab === 'password') {
+        updateData = {
+          currentPassword: profileData.currentPassword,
+          newPassword: profileData.newPassword
+        };
+      }
+      
+      console.log('Updating profile with data:', updateData);
+      
+      // We need to create this API endpoint
+      const response = await authAPI.updateProfile(updateData);
+      
+      if (response.success) {
+        setSuccessMessage('Profile updated successfully!');
+        
+        // Clear password fields after successful password change
+        if (activeTab === 'password') {
+          setProfileData(prev => ({
+            ...prev,
+            currentPassword: '',
+            newPassword: '',
+            confirmPassword: ''
+          }));
+        }
+        
+        // Call onProfileUpdate callback if provided (to refresh parent component)
+        if (onProfileUpdate) {
+          onProfileUpdate(response.user);
+        }
+        
+        console.log('Profile updated successfully');
+      } else {
+        setErrors({ submit: response.message || 'Failed to update profile' });
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setErrors({ submit: error.message || 'Failed to update profile. Please try again.' });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  // Step 5: MAIN RENDER - UPDATED HEADER ONLY, EVERYTHING ELSE PRESERVED
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="editprofile-container">
+        <div className="editprofile-loading">
+          <RefreshCw size={24} className="spinning" />
+          <span>Loading profile...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (loadError) {
+    return (
+      <div className="editprofile-container">
+        <div className="editprofile-error">
+          <AlertCircle size={24} />
+          <span>{loadError}</span>
+          <button onClick={loadUserProfile} className="btn btn-outline">
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="editprofile-container">
-      {/* ✅ UPDATED: Header with gradient background like other components */}
+      {/* Header */}
       <div className="editprofile-header">
         <div className="editprofile-header-content">
           <h1>Edit Profile</h1>
@@ -92,22 +268,37 @@ function EditProfile({ userInfo }) {
         </div>
       </div>
 
-      {/* ✅ PRESERVED: Profile Avatar Section exactly as before */}
+      {/* Success Message */}
+      {successMessage && (
+        <div className="editprofile-success-message">
+          <span>{successMessage}</span>
+        </div>
+      )}
+
+      {/* General Error Message */}
+      {errors.submit && (
+        <div className="editprofile-error-message">
+          <AlertCircle size={16} />
+          <span>{errors.submit}</span>
+        </div>
+      )}
+
+      {/* Profile Avatar Section */}
       <div className="editprofile-avatar-section">
         <div className="editprofile-avatar">
-          {profileData.firstName ? profileData.firstName.charAt(0) : <User size={32} />}
+          {profileData.firstName ? profileData.firstName.charAt(0).toUpperCase() : <User size={32} />}
         </div>
         <div className="editprofile-avatar-info">
           <h3>{profileData.firstName} {profileData.lastName}</h3>
           <p>{profileData.email}</p>
-          <button className="editprofile-btn-outline">
+          <button className="editprofile-btn-outline" disabled>
             <Camera size={16} />
-            Change Photo
+            Change Photo (Coming Soon)
           </button>
         </div>
       </div>
 
-      {/* ✅ PRESERVED: Tabs exactly as before */}
+      {/* Tabs */}
       <div className="editprofile-tabs">
         <button 
           className={`editprofile-tab ${activeTab === 'personal' ? 'active' : ''}`}
@@ -129,7 +320,7 @@ function EditProfile({ userInfo }) {
         </button>
       </div>
 
-      {/* ✅ PRESERVED: Form Content exactly as before */}
+      {/* Form Content */}
       <form onSubmit={handleSubmit} className="editprofile-form">
         
         {/* Personal Info Tab */}
@@ -144,6 +335,7 @@ function EditProfile({ userInfo }) {
                   value={profileData.firstName}
                   onChange={handleChange}
                   className={`editprofile-input ${errors.firstName ? 'error' : ''}`}
+                  disabled={isSaving}
                 />
                 {errors.firstName && <span className="editprofile-error">{errors.firstName}</span>}
               </div>
@@ -156,6 +348,7 @@ function EditProfile({ userInfo }) {
                   value={profileData.lastName}
                   onChange={handleChange}
                   className={`editprofile-input ${errors.lastName ? 'error' : ''}`}
+                  disabled={isSaving}
                 />
                 {errors.lastName && <span className="editprofile-error">{errors.lastName}</span>}
               </div>
@@ -169,6 +362,7 @@ function EditProfile({ userInfo }) {
                 value={profileData.email}
                 onChange={handleChange}
                 className={`editprofile-input ${errors.email ? 'error' : ''}`}
+                disabled={isSaving}
               />
               {errors.email && <span className="editprofile-error">{errors.email}</span>}
             </div>
@@ -180,9 +374,11 @@ function EditProfile({ userInfo }) {
                 name="phone"
                 value={profileData.phone}
                 onChange={handleChange}
-                className="editprofile-input"
+                className={`editprofile-input ${errors.phone ? 'error' : ''}`}
                 placeholder="+30 123 456 7890"
+                disabled={isSaving}
               />
+              {errors.phone && <span className="editprofile-error">{errors.phone}</span>}
             </div>
           </div>
         )}
@@ -199,6 +395,7 @@ function EditProfile({ userInfo }) {
                 onChange={handleChange}
                 className="editprofile-input"
                 placeholder="Your Company Name"
+                disabled={isSaving}
               />
             </div>
 
@@ -210,6 +407,7 @@ function EditProfile({ userInfo }) {
                   value={profileData.companySize}
                   onChange={handleChange}
                   className="editprofile-input"
+                  disabled={isSaving}
                 >
                   <option value="">Select size</option>
                   <option value="startup">Startup (1-10)</option>
@@ -227,6 +425,7 @@ function EditProfile({ userInfo }) {
                   value={profileData.industry}
                   onChange={handleChange}
                   className="editprofile-input"
+                  disabled={isSaving}
                 >
                   <option value="">Select industry</option>
                   <option value="technology">Technology</option>
@@ -234,6 +433,8 @@ function EditProfile({ userInfo }) {
                   <option value="healthcare">Healthcare</option>
                   <option value="education">Education</option>
                   <option value="marketing">Marketing</option>
+                  <option value="retail">Retail</option>
+                  <option value="manufacturing">Manufacturing</option>
                   <option value="other">Other</option>
                 </select>
               </div>
@@ -247,9 +448,11 @@ function EditProfile({ userInfo }) {
                   name="website"
                   value={profileData.website}
                   onChange={handleChange}
-                  className="editprofile-input"
+                  className={`editprofile-input ${errors.website ? 'error' : ''}`}
                   placeholder="https://yourcompany.com"
+                  disabled={isSaving}
                 />
+                {errors.website && <span className="editprofile-error">{errors.website}</span>}
               </div>
 
               <div className="editprofile-form-group">
@@ -261,6 +464,7 @@ function EditProfile({ userInfo }) {
                   onChange={handleChange}
                   className="editprofile-input"
                   placeholder="Athens, Greece"
+                  disabled={isSaving}
                 />
               </div>
             </div>
@@ -274,6 +478,7 @@ function EditProfile({ userInfo }) {
                 className="editprofile-input"
                 rows="4"
                 placeholder="Tell us about your company..."
+                disabled={isSaving}
               />
             </div>
           </div>
@@ -283,19 +488,21 @@ function EditProfile({ userInfo }) {
         {activeTab === 'password' && (
           <div className="editprofile-tab-content">
             <div className="editprofile-form-group">
-              <label>Current Password</label>
+              <label>Current Password *</label>
               <input
                 type="password"
                 name="currentPassword"
                 value={profileData.currentPassword}
                 onChange={handleChange}
-                className="editprofile-input"
+                className={`editprofile-input ${errors.currentPassword ? 'error' : ''}`}
                 placeholder="Enter current password"
+                disabled={isSaving}
               />
+              {errors.currentPassword && <span className="editprofile-error">{errors.currentPassword}</span>}
             </div>
 
             <div className="editprofile-form-group">
-              <label>New Password</label>
+              <label>New Password *</label>
               <input
                 type="password"
                 name="newPassword"
@@ -303,12 +510,13 @@ function EditProfile({ userInfo }) {
                 onChange={handleChange}
                 className={`editprofile-input ${errors.newPassword ? 'error' : ''}`}
                 placeholder="Enter new password"
+                disabled={isSaving}
               />
               {errors.newPassword && <span className="editprofile-error">{errors.newPassword}</span>}
             </div>
 
             <div className="editprofile-form-group">
-              <label>Confirm New Password</label>
+              <label>Confirm New Password *</label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -316,6 +524,7 @@ function EditProfile({ userInfo }) {
                 onChange={handleChange}
                 className={`editprofile-input ${errors.confirmPassword ? 'error' : ''}`}
                 placeholder="Confirm new password"
+                disabled={isSaving}
               />
               {errors.confirmPassword && <span className="editprofile-error">{errors.confirmPassword}</span>}
             </div>
@@ -326,15 +535,15 @@ function EditProfile({ userInfo }) {
           </div>
         )}
 
-        {/* ✅ PRESERVED: Submit Button exactly as before */}
+        {/* Submit Button */}
         <div className="editprofile-form-footer">
           <button 
             type="submit" 
             className="editprofile-btn-primary"
-            disabled={isLoading}
+            disabled={isSaving}
           >
-            <Save size={16} />
-            {isLoading ? 'Saving...' : 'Save Changes'}
+            {isSaving ? <RefreshCw size={16} className="spinning" /> : <Save size={16} />}
+            {isSaving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </form>

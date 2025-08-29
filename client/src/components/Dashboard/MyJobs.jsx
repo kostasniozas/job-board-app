@@ -1,4 +1,4 @@
-// MyJobs.jsx - COMPLETE FINAL VERSION with Backend Integration and Salary Fix
+// MyJobs.jsx - COMPLETE VERSION with Backend Integration and Fixed Delete/Close Job
 import { useState, useEffect } from 'react';
 import { 
   Plus, 
@@ -24,23 +24,28 @@ import DeleteJobModal from './DeleteJobModal';
 import './MyJobs.css';
 
 function MyJobs({ onCreateJob, userInfo }) {
-  // Step 1: STATE για jobs από backend
+  // STATE για jobs από backend
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   
-  // Step 2: ΥΠΑΡΧΟΝΤΑ STATES διατηρημένα
+  // ΥΠΑΡΧΟΝΤΑ STATES διατηρημένα
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedJob, setSelectedJob] = useState(null);
   const [showJobDetails, setShowJobDetails] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  
+  // DELETE MODAL STATES
   const [deletingJob, setDeletingJob] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  // CLOSE JOB STATE
+  const [isClosingJob, setIsClosingJob] = useState(null); // jobId που κλείνει
 
-  // Step 3: ΝΕΕΣ ΣΥΝΑΡΤΗΣΕΙΣ για backend integration
+  // ΝΕΕΣ ΣΥΝΑΡΤΗΣΕΙΣ για backend integration
   const fetchMyJobs = async () => {
     try {
       setIsLoading(true);
@@ -64,17 +69,17 @@ function MyJobs({ onCreateJob, userInfo }) {
     }
   };
 
-  // Step 4: Load jobs όταν φορτώνει το component
+  // Load jobs όταν φορτώνει το component
   useEffect(() => {
     fetchMyJobs();
   }, []);
 
-  // Step 5: Refresh function
+  // Refresh function
   const handleRefresh = () => {
     fetchMyJobs();
   };
 
-  // Step 6: ΔΙΑΤΗΡΗΣΗ filter logic
+  // ΔΙΑΤΗΡΗΣΗ filter logic
   const filteredJobs = jobs.filter(job => {
     const matchesSearch = job.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          job.department?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,7 +88,7 @@ function MyJobs({ onCreateJob, userInfo }) {
     return matchesSearch && matchesStatus;
   });
 
-  // Step 7: ΔΙΑΤΗΡΗΣΗ όλων των handler functions
+  // ΔΙΑΤΗΡΗΣΗ όλων των handler functions
   const handleViewJob = (job) => {
     setSelectedJob(job);
     setShowJobDetails(true);
@@ -104,6 +109,7 @@ function MyJobs({ onCreateJob, userInfo }) {
     fetchMyJobs();
   };
 
+  // ΝΕΕΣ ΣΥΝΑΡΤΗΣΕΙΣ για delete
   const handleDeleteJob = (job) => {
     setDeletingJob(job);
     setShowDeleteModal(true);
@@ -113,16 +119,24 @@ function MyJobs({ onCreateJob, userInfo }) {
     setIsDeleting(true);
     
     try {
-      // Call the delete API
-      await jobsAPI.deleteJob(jobId);
+      console.log('Deleting job:', jobId);
+      // Το DeleteJobModal στέλνει job.id, αλλά χρειαζόμαστε το _id για το backend
+      const actualJobId = jobId || deletingJob._id || deletingJob.id;
+      const response = await jobsAPI.deleteJob(actualJobId);
+      console.log('Delete response:', response);
       
-      // Remove from local state
-      setJobs(prev => prev.filter(job => job._id !== jobId));
-      setShowDeleteModal(false);
-      setDeletingJob(null);
+      if (response.success) {
+        // Remove from local state - χρησιμοποιούμε _id για filter
+        setJobs(prev => prev.filter(job => (job._id || job.id) !== actualJobId));
+        setShowDeleteModal(false);
+        setDeletingJob(null);
+        console.log('Job deleted successfully');
+      } else {
+        throw new Error(response.message || 'Failed to delete job');
+      }
     } catch (error) {
       console.error('Error deleting job:', error);
-      // You might want to show an error message here
+      setError('Failed to delete job: ' + error.message);
     } finally {
       setIsDeleting(false);
     }
@@ -135,13 +149,33 @@ function MyJobs({ onCreateJob, userInfo }) {
     }
   };
 
-  const handleCloseJob = (jobId) => {
-    setJobs(prev => prev.map(job => 
-      job._id === jobId ? { ...job, status: 'closed' } : job
-    ));
+  // ΔΙΟΡΘΩΜΕΝΗ ΣΥΝΑΡΤΗΣΗ για close job που καλεί backend
+  const handleCloseJob = async (jobId) => {
+    setIsClosingJob(jobId); // Show loading state
+    
+    try {
+      console.log('Closing job:', jobId);
+      const response = await jobsAPI.closeJob(jobId);
+      console.log('Close job response:', response);
+      
+      if (response.success) {
+        // Update local state
+        setJobs(prev => prev.map(job => 
+          job._id === jobId ? { ...job, status: 'closed' } : job
+        ));
+        console.log('Job closed successfully');
+      } else {
+        throw new Error(response.message || 'Failed to close job');
+      }
+    } catch (error) {
+      console.error('Error closing job:', error);
+      setError('Failed to close job: ' + error.message);
+    } finally {
+      setIsClosingJob(null); // Clear loading state
+    }
   };
 
-  // Step 8: ΔΙΑΤΗΡΗΣΗ utility functions
+  // ΔΙΑΤΗΡΗΣΗ utility functions
   const getStatusBadge = (status) => {
     switch (status) {
       case 'active':
@@ -165,7 +199,7 @@ function MyJobs({ onCreateJob, userInfo }) {
     });
   };
 
-  // Step 9: ΕΝΗΜΕΡΩΜΕΝΗ Job card render function
+  // ΕΝΗΜΕΡΩΜΕΝΗ Job card render function με loading states
   const renderJobCard = (job) => (
     <div key={job._id || job.id} className="myjobs-job-card">
       <div className="myjobs-job-header">
@@ -201,14 +235,18 @@ function MyJobs({ onCreateJob, userInfo }) {
                 Edit Job
               </button>
               {(!job.status || job.status === 'active') && (
-                <button onClick={() => handleCloseJob(job._id || job.id)}>
+                <button 
+                  onClick={() => handleCloseJob(job._id || job.id)}
+                  disabled={isClosingJob === (job._id || job.id)}
+                >
                   <Clock size={16} />
-                  Close Job
+                  {isClosingJob === (job._id || job.id) ? 'Closing...' : 'Close Job'}
                 </button>
               )}
               <button 
                 onClick={() => handleDeleteJob(job)}
                 className="myjobs-delete-action"
+                disabled={isDeleting}
               >
                 <Trash2 size={16} />
                 Delete
@@ -259,7 +297,7 @@ function MyJobs({ onCreateJob, userInfo }) {
     </div>
   );
 
-  // Step 10: ΔΙΟΡΘΩΜΕΝΟ Job details modal με salary fix
+  // ΔΙΟΡΘΩΜΕΝΟ Job details modal με salary fix
   const renderJobDetails = () => {
     if (!selectedJob) return null;
 
@@ -434,7 +472,7 @@ function MyJobs({ onCreateJob, userInfo }) {
     );
   };
 
-  // Step 11: ΕΝΗΜΕΡΩΜΕΝΟ main render με loading/error states
+  // ΕΝΗΜΕΡΩΜΕΝΟ main render με loading/error states
   return (
     <div className="myjobs-container">
       {/* Header */}
@@ -443,23 +481,13 @@ function MyJobs({ onCreateJob, userInfo }) {
           <h1>My Job Postings</h1>
           <p>Manage your job postings and track applications</p>
         </div>
-        <div className="myjobs-header-actions">
-          <button 
-            onClick={handleRefresh}
-            className="myjobs-btn myjobs-btn-outline"
-            disabled={isLoading}
-          >
-            <RefreshCw size={20} className={isLoading ? 'spinning' : ''} />
-            Refresh
-          </button>
-          <button 
-            onClick={onCreateJob}
-            className="myjobs-btn myjobs-btn-primary myjobs-create-btn"
-          >
-            <Plus size={20} />
-            Post New Job
-          </button>
-        </div>
+        <button 
+          onClick={onCreateJob}
+          className="myjobs-btn myjobs-btn-primary myjobs-create-btn"
+        >
+          <Plus size={20} />
+          Post New Job
+        </button>
       </div>
 
       {/* Error Message */}
@@ -570,8 +598,13 @@ function MyJobs({ onCreateJob, userInfo }) {
         userInfo={userInfo}
       />
 
+      {/* ΧΡΗΣΗ ΤΟΥ ΥΠΑΡΧΟΝΤΟΣ DeleteJobModal */}
       <DeleteJobModal
-        job={deletingJob}
+        job={{
+          ...deletingJob,
+          id: deletingJob?._id || deletingJob?.id, // Ensure id is available for DeleteJobModal
+          applicants: deletingJob?.applicants || 0
+        }}
         isOpen={showDeleteModal}
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}

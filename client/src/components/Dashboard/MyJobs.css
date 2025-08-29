@@ -803,8 +803,8 @@
   }
   
   .myjobs-create-btn {
-    width: 100% !important;
-    justify-content: center !important;
+    width: 100%;
+    justify-content: center;
   }
   
   .myjobs-filters {
@@ -933,6 +933,7 @@
     min-width: 180px;
   }
 }
+
 /* Loading and Error States */
 .myjobs-loading {
   display: flex;
@@ -974,11 +975,6 @@
   margin-left: 10px;
 }
 
-.myjobs-header-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
 /* Additional CSS for Enhanced View Details Modal */
 .myjobs-detail-text {
   line-height: 1.6;

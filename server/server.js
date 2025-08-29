@@ -159,14 +159,12 @@ app.get('/api/test', (req, res) => {
 // ============================================
 
 const authRoutes = require('./routes/auth');
+const jobRoutes = require('./routes/jobs');
+const applicationRoutes = require('./routes/applications');
 
 app.use('/api/auth', authRoutes);
-// app.use('/api/auth', authRoutes);
-// app.use('/api/users', userRoutes);
-const jobRoutes = require('./routes/jobs');
 app.use('/api/jobs', jobRoutes);
-// app.use('/api/jobs', jobRoutes);
-// app.use('/api/applications', applicationRoutes);
+app.use('/api/applications', applicationRoutes);
 
 // ============================================
 // ERROR HANDLING
